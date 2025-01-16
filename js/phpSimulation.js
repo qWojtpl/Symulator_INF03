@@ -1,18 +1,18 @@
 
-
-function load() {
-    const contentDocument = document.querySelector("iframe").contentDocument;
-
+function simulate(contentDocument, code) {
+    
     var data = new FormData();"\n", ""
-    data.append('code', document.querySelector("textarea").value);
+    data.append("code", code);
     
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', './simulate.php', true);
+
+    xhr.open("POST", "./simulate.php", true);
     xhr.onload = function () {
         contentDocument.open();
         contentDocument.write(this.responseText);
         contentDocument.close();
     };
+
     xhr.send(data);
 
 }
