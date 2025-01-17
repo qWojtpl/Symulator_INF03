@@ -76,12 +76,17 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     cursor: pointer;
+    transition: .3s;
 }
 
 .editor-file img {
     width: 24px;
 }
 
-.editor-file.active {
+.editor-file:not(.active) {
     box-shadow: 3px 3px 3px black;
+}
+
+#save-string {
+    margin-right: auto;
 }

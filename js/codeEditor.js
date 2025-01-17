@@ -1,5 +1,14 @@
 
 let firstMouse = true;
+let contentChanged = false;
+
+let update = setInterval(() => {
+    if(contentChanged) {
+        contentChanged = false;
+        saveCurrentFile();
+        updateEditorSummary(editor);
+    }
+}, 1000 * 10);
 
 document.addEventListener("DOMContentLoaded", () => {
     
@@ -54,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
     editor.addEventListener("input", () => {
         updateEditorColors(editor);
         checkChildren(editor);
+        contentChanged = true;
         updateEditorSummary(editor, false);
     });
 
@@ -95,7 +105,7 @@ function updateEditorSummary(editor, start) {
         }
         col = document.getSelection().getRangeAt(0).startOffset + 1;
     }
-    summary.innerHTML = "<span>" + charset + "</span><span>Ln " + ln + ", Col " + col + "</span><span>Lines: " + lines + "</span>";
+    summary.innerHTML = "<span id='save-string'>" + getSaveString() + "</span><span>" + charset + "</span><span>Ln " + ln + ", Col " + col + "</span><span>Lines: " + lines + "</span>";
 }
 
 function updateEditorColors(editor) {
@@ -170,4 +180,31 @@ function checkChildren(editor) {
 
 function getEditorCode(editor) {
     return editor.textContent;   
+}
+
+function getEditorFormattedCode(editor) {
+    return editor.innerHTML;
+}
+
+function setEditorFormattedCode(editor, code) {
+    editor.innerHTML = code;
+} 
+
+function setEditorCode(editor, code) {
+
+    if(code == null) {
+        return;
+    }
+
+    let split = code.split("\n");
+
+    let newCode = "";
+
+    for(let i = 0; i < split.length; i++) {
+        console.log(split[i]);
+        newCode += "<div>" + split[i] + "</div>";
+    }
+
+    editor.innerHTML = newCode;
+
 }
