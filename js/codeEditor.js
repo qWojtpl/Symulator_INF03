@@ -1,17 +1,14 @@
 
-let firstMouse = true;
-let contentChanged = false;
+document.addEventListener("DOMContentLoaded", init);
 
-let update = setInterval(() => {
-    if(contentChanged) {
-        contentChanged = false;
-        saveCurrentFile();
-        updateEditorSummary(editor);
-    }
+let firstMouse = true;
+let readyToSave = false;
+
+let saveInterval = setInterval(() => {
+    readyToSave = true;
 }, 1000 * 10);
 
-document.addEventListener("DOMContentLoaded", () => {
-    
+function init() {
     const editor = document.getElementById("code-editor");
     
     updateEditorSummary(editor, true);
@@ -63,7 +60,10 @@ document.addEventListener("DOMContentLoaded", () => {
     editor.addEventListener("input", () => {
         updateEditorColors(editor);
         checkChildren(editor);
-        contentChanged = true;
+        if(readyToSave) {
+            readyToSave = false;
+            saveCurrentFile();
+        }
         updateEditorSummary(editor, false);
     });
 
@@ -71,8 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateEditorSummary(editor, firstMouse);
         firstMouse = false;
     });
-
-});
+}
 
 function insertChar(char) {
     let sel = window.getSelection();
@@ -132,15 +131,6 @@ function updateEditorColors(editor) {
     for(let i = 0; i < character; i++) {
         selection.modify("move", "forward", "character");
     }
-}
-
-function moveCursorToEnd(child) {
-    const selection = window.getSelection();
-    const range = document.createRange();
-    range.selectNodeContents(child);
-    range.collapse(false); 
-    selection.removeAllRanges();
-    selection.addRange(range);
 }
 
 /**

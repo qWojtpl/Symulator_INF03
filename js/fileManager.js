@@ -4,24 +4,36 @@ document.addEventListener("DOMContentLoaded", init);
 const EXAM_NAME = "inf_03-";
 let editor;
 let saveString = [];
+let files = [];
 
 function init() {
     editor = document.getElementById("code-editor");
-    let files = document.querySelectorAll(".editor-file[filename]");
+    files = document.querySelectorAll(".editor-file[filename]");
     for(let i = 0; i < files.length; i++) {
         files[i].addEventListener("click", () => {
-            saveCurrentFile();
-            for(let j = 0; j < files.length; j++) {
-                files[j].classList.remove("active");
-            }
-            files[i].classList.add("active");
-            loadFileIntoEditor(files[i].getAttribute("filename"));
-            updateEditorSummary(editor);
+            fileClick(i);
+        });
+        files[i].addEventListener("contextmenu", (e) => {
+            fileContextMenu(i, e);
         });
     }
     loadFileIntoEditor(getCurrentFileName());
 }
 
+function fileClick(i) {
+    saveCurrentFile();
+    for(let j = 0; j < files.length; j++) {
+        files[j].classList.remove("active");
+    }
+    files[i].classList.add("active");
+    loadFileIntoEditor(files[i].getAttribute("filename"));
+    updateEditorSummary(editor, true);
+}
+
+function fileContextMenu(i, e) {
+    e.preventDefault();
+    createContextMenu(e.pageX, e.pageY, ["Otwórz"], [() => { fileClick(i); }]);
+}
 
 function getFile(name) {
     return window.localStorage.getItem(name);
@@ -49,9 +61,12 @@ function saveCurrentFile() {
         return;
     }
     saveFile(EXAM_NAME + currentFileName, getEditorFormattedCode(editor));
-    console.log("Saved current file: " + currentFileName);
+    createSaveString(currentFileName);
+}
+
+function createSaveString(name) {
     let date = new Date();
-    saveString[currentFileName] = "<em>Zapisano " + currentFileName + ": " 
+    saveString[name] = "<em>Zapisano " + name + ": " 
         + date.toLocaleDateString() + " " + date.toLocaleTimeString() + "</em>";
 }
 

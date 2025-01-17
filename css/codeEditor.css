@@ -22,10 +22,16 @@
     align-items: center;
     gap: 1vw;
     border: 1px solid #2b2b2b;
+    flex-wrap: wrap;
 }
 
 #editor-summary span {
     width: fit-content;
+}
+
+#editor-summary span#save-string {
+    margin-left: 1vw;
+    margin-right: auto;
 }
 
 #code-editor {
@@ -62,11 +68,10 @@
 #editor-files {
     display: flex;
     width: 100%;
-    flex-wrap: wrap;
 }
 
 .editor-file {
-    width: 125px;
+    padding-right: 1vw;
     display: flex;
     justify-content: left;
     align-items: center;
@@ -77,6 +82,7 @@
     text-overflow: ellipsis;
     cursor: pointer;
     transition: .3s;
+    text-overflow: ellipsis;
 }
 
 .editor-file img {
@@ -85,8 +91,4 @@
 
 .editor-file:not(.active) {
     box-shadow: 3px 3px 3px black;
-}
-
-#save-string {
-    margin-right: auto;
 }
