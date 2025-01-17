@@ -8,17 +8,19 @@
     height: 700px;
     background-color: #1f1f1f;
     border: 1px solid #2b2b2b;
+    display: flex;
+    flex-direction: column;
 }
 
 #editor-summary {
     text-align: right;
     color: #b6b6b6;
-    height: 48px;
-    padding-right: 20px;
+    height: 7vh;
+    padding-right: 1vw;
     display: flex;
     justify-content: right;
     align-items: center;
-    gap: 20px;
+    gap: 1vw;
     border: 1px solid #2b2b2b;
 }
 
@@ -28,27 +30,27 @@
 
 #code-editor {
     counter-reset: line;
-    overflow-y: scroll;
-    overflow: auto;
-    height: 82%;
+    overflow-y: auto;
+    height: 82vh;
     border: 1px solid #2b2b2b;
     margin: 0;
     outline: 0 solid transparent;
-    padding-top: 20px;
+    padding-top: 10px;
 }
 
 #code-editor div {
     counter-increment: line;
     color: #9cdcfe;
+    width: 50vw;
 }
 
 #code-editor div::before {
     content: counter(line) ". ";
     display: inline-block;
-    width: 42px;
+    width: 2vw;
     text-align: right;
-    margin-right: 5px;
-    padding-right: 5px;
+    margin-right: 0.25vw;
+    padding-right: 0.25vw;
     border-right: 1px solid #2b2b2b;
     color: #617681;
 }
@@ -78,4 +80,8 @@
 
 .editor-file img {
     width: 24px;
+}
+
+.editor-file.active {
+    box-shadow: 3px 3px 3px black;
 }

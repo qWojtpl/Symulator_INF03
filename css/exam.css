@@ -14,6 +14,27 @@ iframe#output {
 }
 
 #editor-container {
-    width: 100%;
+    width: 100vw;
     height: 82vh;
+}
+
+.button {
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    border: none;
+}
+
+.button-run {
+    background-color: #04AA6D;
+    margin: 5px;
+    margin-left: auto;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.button-run:hover {
+    background-color: #059862;
+    cursor: pointer;
 }
