@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     editor.addEventListener("input", () => {
         updateEditorColors(editor);
+        checkChildren(editor);
     });
 
 });
@@ -133,4 +134,19 @@ function getCurrentLine(editor) {
             return i;
         }
     }
+}
+
+function checkChildren(editor) {
+
+    if(editor.innerHTML.startsWith("<br>")) {
+        editor.innerHTML = editor.innerHTML.replace("<br>", "");
+    }
+
+    if(editor.children.length > 0) {
+        return;
+    }
+
+    editor.innerHTML = "<div><br></div>";
+
+
 }

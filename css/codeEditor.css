@@ -21,6 +21,7 @@
     overflow: auto;
     height: 90%;
     border: 1px solid white;
+    margin: 0;
 }
 
 #code-editor div {
