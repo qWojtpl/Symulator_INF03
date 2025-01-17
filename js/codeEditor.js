@@ -100,52 +100,27 @@ function updateEditorSummary(editor, start) {
 
 function updateEditorColors(editor) {
 
-
-
-    return;
-    let range = document.getSelection().getRangeAt(0);
+    let selection = document.getSelection();
+    selection.extend(editor, 0);
+    let character = selection.toString().length;
     for(let i = 0; i < editor.children.length; i++) {
 
-        var str = editor.children[i].textContent;
-        
-        var HTMLattr = str.match(/".+"/g);
+        let divContent = editor.children[i].textContent;
 
-        if(HTMLattr) {
-            if(editor.children[i].innerHTML.includes("span")) {
-                continue;
-            }
-            let newSpan = document.createElement("SPAN");
-            let splitStr = str.split(HTMLattr[0]);
-            console.log(splitStr);
-            newSpan.innerText = HTMLattr[0];
-            newSpan.style.cssText = 'color:red;';
-            editor.children[i].innerHTML = "";
-            editor.children[i].append(splitStr[0]);
-            editor.children[i].append(newSpan);
-            editor.children[i].append(splitStr[1] + " ");
-            let currentLineIndex = getCurrentLine(editor);
-            if(currentLineIndex == i) {
-                let currentLine = editor.children[currentLineIndex];
-                let spanIndex = -1;
-                for(let j = 0; j < currentLine.children.length; j++) {
-                    if(currentLine.children[j] == newSpan) {
-                        spanIndex = j;
-                        break;
-                    }
-                }
-                range.setStart(currentLine, spanIndex + 3);
-                range.setEnd(currentLine, spanIndex + 3);
-            }
-        } else {
-            for(let j = 0; j < editor.children[i].children.length; j++) {
-                if(editor.children[i].children[j].tagName !== "SPAN") {
-                    console.log(editor.children[i].children[j].tagName);
-                    continue;
-                }
-                console.log("abc");
-                editor.children[i].replaceChild(document.createTextNode(editor.children[i].children[j].textContent), editor.children[i].children[j]);
-            }
+        editor.children[i].innerHTML = editor.children[i].innerHTML.replace(/<span style="color:.+">/g, "").replace(/<\/span>/g, "");
+
+        let match = [...divContent.matchAll(/".+"/g)];
+
+        for(let j = 0; j < match.length; j++) {
+            let input = match[j][0];
+            editor.children[i].innerHTML = divContent.replace(input, "<span style='color:green'>" + input + "</span>");
         }
+        
+    }
+    selection.collapse(editor, 0);
+
+    for(let i = 0; i < character; i++) {
+        selection.modify("move", "forward", "character");
     }
 }
 
