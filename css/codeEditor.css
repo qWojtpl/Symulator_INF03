@@ -31,7 +31,7 @@
 #code-editor div::before {
     content: counter(line) ". ";
     display: inline-block;
-    width: 28px;
+    width: 42px;
     text-align: right;
     margin-right: 5px;
     padding-right: 5px;

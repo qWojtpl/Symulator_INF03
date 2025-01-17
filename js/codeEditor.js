@@ -1,6 +1,4 @@
 
-let selectedLine;
-
 document.addEventListener("DOMContentLoaded", () => {
     
     const editor = document.getElementById("code-editor");
@@ -11,20 +9,13 @@ document.addEventListener("DOMContentLoaded", () => {
             if(e.shiftKey) {
 
             } else {  
-                insertTabChar();
+                insertChar("\t");
             }
         }
-        if(e.key == "Enter") {
+        if(e.key == "Enter" && e.shiftKey) {
             e.preventDefault();
-            createNewLine(editor);
         }
         updateEditorSummary();
-    });
-
-    editor.addEventListener("keyup", (e) => {
-        if(e.key == "Enter") {
-            updateEditorColors(editor, "CSS");
-        }
     });
 
     editor.addEventListener("focus", () => {
@@ -35,9 +26,13 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
     });
 
+    editor.addEventListener("input", () => {
+        updateEditorColors(editor);
+    });
+
 });
 
-function insertTabChar() {
+function insertChar(char) {
     let sel = window.getSelection();
     let restart = false;
     if(sel.rangeCount) {
@@ -46,7 +41,7 @@ function insertTabChar() {
             restart = true;
             range.deleteContents();
         }
-        let node = document.createTextNode("\t");
+        let node = document.createTextNode(char);
         range.insertNode(node);
         if(restart) {
             range.setStart(node, 1);
@@ -56,23 +51,56 @@ function insertTabChar() {
 }
 
 function updateEditorSummary() {
-
-    
     const editor = document.getElementById("code-editor");
-
     const summary = document.getElementById("editor-summary");
-
     let lines = editor.children.length;
-
     summary.innerText = "Lines: " + lines + "";
-
 }
 
-function updateEditorColors(editor, style) {
-    for(let i = 0; i < editor.children.length - 1; i++) {
-        let child = editor.children[i];
-        if(style == "CSS") {
-            styleCSS(child);
+function updateEditorColors(editor) {
+    return;
+    let range = document.getSelection().getRangeAt(0);
+    for(let i = 0; i < editor.children.length; i++) {
+
+        var str = editor.children[i].textContent;
+        
+        var HTMLattr = str.match(/".+"/g);
+
+        if(HTMLattr) {
+            if(editor.children[i].innerHTML.includes("span")) {
+                continue;
+            }
+            let newSpan = document.createElement("SPAN");
+            let splitStr = str.split(HTMLattr[0]);
+            console.log(splitStr);
+            newSpan.innerText = HTMLattr[0];
+            newSpan.style.cssText = 'color:red;';
+            editor.children[i].innerHTML = "";
+            editor.children[i].append(splitStr[0]);
+            editor.children[i].append(newSpan);
+            editor.children[i].append(splitStr[1] + " ");
+            let currentLineIndex = getCurrentLine(editor);
+            if(currentLineIndex == i) {
+                let currentLine = editor.children[currentLineIndex];
+                let spanIndex = -1;
+                for(let j = 0; j < currentLine.children.length; j++) {
+                    if(currentLine.children[j] == newSpan) {
+                        spanIndex = j;
+                        break;
+                    }
+                }
+                range.setStart(currentLine, spanIndex + 3);
+                range.setEnd(currentLine, spanIndex + 3);
+            }
+        } else {
+            for(let j = 0; j < editor.children[i].children.length; j++) {
+                if(editor.children[i].children[j].tagName !== "SPAN") {
+                    console.log(editor.children[i].children[j].tagName);
+                    continue;
+                }
+                console.log("abc");
+                editor.children[i].replaceChild(document.createTextNode(editor.children[i].children[j].textContent), editor.children[i].children[j]);
+            }
         }
     }
 }
@@ -86,24 +114,23 @@ function moveCursorToEnd(child) {
     selection.addRange(range);
 }
 
-function createNewLine(editor) {
-    let line = document.createElement("div");
-    line.setAttribute("index", editor);
-    line.addEventListener("click", (e) => {
-        selectedLine = e.target.getAttribute("index");
-    });
-    editor.appendChild(line);
-    moveCursorToEnd(editor.children[editor.children.length - 1]);
-}
+/**
+ * Get current line when the cursor is in the beggining of the line
+ * 
+ * @param {HTMLElement} editor Editor element
+ * @returns Index of currently selected line
+ */
+function getCurrentLine(editor) {
+    let selection = document.getSelection();
+    let node = selection.anchorNode.parentElement;
 
-function styleCSS(child) {
-    let firstLetter = child.innerText.substring(0, 1);
-    let text = child.innerText;
-    text = text.replace("{", "<span style='color: green'>{</span> ");
-    text = text.replace("}", "<span style='color: green'>}</span> ");
-    if(firstLetter == '\t') {
-        child.innerHTML = "<span style='color:blue'>" + text + "</span> ";
-    } else if(firstLetter == '.') {
-        child.innerHTML = "<span style='color:orange'>" + text + "</span> "
+    if(node.getAttribute("id") == "code-editor") {
+        node = selection.anchorNode;
+    }
+
+    for(let i = 0; i < editor.children.length; i++) {
+        if(node == editor.children[i]) {
+            return i;
+        }
     }
 }
