@@ -13,7 +13,7 @@
     include("./vendor/autoload.php");
 
     $sandbox = new PHPSandbox\PHPSandbox;
-    $sandbox->whitelistFunc('test', 'date');
+    $sandbox->whitelistFunc('test', 'date', 'var_dump');
 
     $code = $_POST["code"];
 
@@ -32,7 +32,7 @@
     while($from != strlen($code)) {
         $i++;
         if($phpBlock) {
-            $from = $startPositions[$j];
+            $from = $startPositions[$j] + 5;
             $to = strlen($code);
             if(isset($endPositions[$j])) {
                 $to = $endPositions[$j];
@@ -56,11 +56,16 @@
         $from = $to;
     }
 
+
+    $newCodeBlock = "<?php ";
+
     for($i = 0; $i < count($blocks); $i++) { 
-        if(in_array($i, $phpIndexes)) {
-            $sandbox->execute($blocks[$i]); 
+        if(!in_array($i, $phpIndexes)) {
+            $newCodeBlock .= "echo \"".addslashes($blocks[$i])."\"; ";
         } else {
-            echo $blocks[$i];
+            $newCodeBlock .= $blocks[$i];
         }
     } 
+
+    $sandbox->execute($newCodeBlock." ?>");
 ?>

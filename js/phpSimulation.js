@@ -3,7 +3,7 @@ function simulate(contentDocument, code) {
     
     var data = new FormData();"\n", ""
     data.append("code", code);
-    
+
     var xhr = new XMLHttpRequest();
 
     xhr.open("POST", "./simulate.php", true);
