@@ -28,6 +28,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     editor.addEventListener("paste", (e) => {
         e.preventDefault();
+        var text = '';
+        if (e.clipboardData || e.originalEvent.clipboardData) {
+        text = (e.originalEvent || e).clipboardData.getData('text/plain');
+        } else if (window.clipboardData) {
+            text = window.clipboardData.getData('Text');
+        }
+        if(document.queryCommandSupported('insertText')) {
+            document.execCommand('insertText', false, text);
+        } else {
+            document.execCommand('paste', false, text);
+        }
     });
 
     editor.addEventListener("dragenter", (e) => {
@@ -88,6 +99,9 @@ function updateEditorSummary(editor, start) {
 }
 
 function updateEditorColors(editor) {
+
+
+
     return;
     let range = document.getSelection().getRangeAt(0);
     for(let i = 0; i < editor.children.length; i++) {
@@ -176,7 +190,6 @@ function checkChildren(editor) {
     }
 
     editor.innerHTML = "<div><br></div>";
-
 
 }
 

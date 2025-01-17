@@ -10,7 +10,7 @@
         return $allpos;
     }
 
-    require_once("./vendor/autoload.php");
+    require_once("../vendor/autoload.php");
 
     $sandbox = new PHPSandbox\PHPSandbox;
     $sandbox->whitelistFunc("date", "function");

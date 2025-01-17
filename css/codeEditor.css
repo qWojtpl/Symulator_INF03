@@ -30,7 +30,7 @@
     counter-reset: line;
     overflow-y: scroll;
     overflow: auto;
-    height: 90%;
+    height: 82%;
     border: 1px solid #2b2b2b;
     margin: 0;
     outline: 0 solid transparent;
@@ -55,4 +55,27 @@
 
 #code-editor div span {
     display: inline-block;
+}
+
+#editor-files {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.editor-file {
+    width: 125px;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    color: white;
+    gap: 10px;
+    border: 1px solid #2b2b2b;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.editor-file img {
+    width: 24px;
 }

@@ -6,17 +6,33 @@
     <script src="../js/codeEditor.js"></script>
     <script src="../js/phpSimulation.js"></script>
     <link rel="stylesheet" href="../css/codeEditor.css">
+    <link rel="stylesheet" href="../css/exam.css">
 </head>
-<body style="display:flex;">
-    
-    <div id="editor-container">
-        <pre id="code-editor" contenteditable="true" spellcheck="false"><div><br></div></pre>
-        <div id="editor-summary">
-        </div>
-        <button onclick="simulate(document.querySelector('iframe').contentDocument, getEditorCode(document.getElementById('code-editor')))">Zapisz</button>
-    </div>
+<body>
+    <nav>
 
-    <iframe width=1920 height=1280 style="transform:scale(50%);transform-origin:0 0;"></iframe>
+    </nav>
+    <main>
+        <div id="editor-container">
+            <div id="editor-files">
+                <div class="editor-file">
+                    <div class="background"></div>
+                    <img src="../assets/php.png">
+                    <p>index.php</p>
+                </div>
+                <div class="editor-file">
+                    <div class="background"></div>
+                    <img src="../assets/css.png">
+                    <p>style.css</p>
+                </div>
+            </div>
+            <pre id="code-editor" contenteditable="true" spellcheck="false"><div><br></div></pre>
+            <div id="editor-summary">
+            </div>
+        </div>
+    
+        <iframe id="output"></iframe>
+    </main>
     
 
 </body>
