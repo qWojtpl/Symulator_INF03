@@ -1,7 +1,11 @@
 
+let firstMouse = true;
+
 document.addEventListener("DOMContentLoaded", () => {
     
     const editor = document.getElementById("code-editor");
+    
+    updateEditorSummary(editor, true);
 
     editor.addEventListener("keydown", (e) => {
         if(e.key == "Tab") {
@@ -15,11 +19,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if(e.key == "Enter" && e.shiftKey) {
             e.preventDefault();
         }
-        updateEditorSummary();
+        updateEditorSummary(editor, false);
     });
 
-    editor.addEventListener("focus", () => {
-        updateEditorSummary();
+    editor.addEventListener("keyup", () => {
+        updateEditorSummary(editor, false);
     });
 
     editor.addEventListener("paste", (e) => {
@@ -29,6 +33,11 @@ document.addEventListener("DOMContentLoaded", () => {
     editor.addEventListener("input", () => {
         updateEditorColors(editor);
         checkChildren(editor);
+    });
+
+    editor.addEventListener("mousedown", () => {
+        updateEditorSummary(editor, firstMouse);
+        firstMouse = false;
     });
 
 });
@@ -51,11 +60,20 @@ function insertChar(char) {
     }
 }
 
-function updateEditorSummary() {
-    const editor = document.getElementById("code-editor");
+function updateEditorSummary(editor, start) {
     const summary = document.getElementById("editor-summary");
     let lines = editor.children.length;
-    summary.innerText = "Lines: " + lines + "";
+    let charset = document.querySelector("meta[charset]").getAttribute("charset");
+    let ln = 1;
+    let col = 1;
+    if(!start) {
+        ln = getCurrentLine(editor) + 1;
+        if(ln == NaN) {
+            ln = 1;
+        }
+        col = document.getSelection().getRangeAt(0).startOffset + 1;
+    }
+    summary.innerHTML = "<span>" + charset + "</span><span>Ln " + ln + ", Col " + col + "</span><span>Lines: " + lines + "</span>";
 }
 
 function updateEditorColors(editor) {
