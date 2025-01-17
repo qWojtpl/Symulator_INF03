@@ -10,10 +10,12 @@
         return $allpos;
     }
 
-    include("./vendor/autoload.php");
+    require_once("./vendor/autoload.php");
 
     $sandbox = new PHPSandbox\PHPSandbox;
-    $sandbox->whitelistFunc('test', 'date', 'var_dump');
+    $sandbox->whitelistFunc("date", "function");
+    $sandbox->setOption("allow_functions", "true");
+    $sandbox->defineFunc('mysqli_connect', function($s) { echo "brbr ".$s; });
 
     $code = $_POST["code"];
 

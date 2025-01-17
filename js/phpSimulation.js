@@ -6,7 +6,7 @@ function simulate(contentDocument, code) {
 
     var xhr = new XMLHttpRequest();
 
-    xhr.open("POST", "./simulate.php", true);
+    xhr.open("POST", "../simulate.php", true);
     xhr.onload = function () {
         contentDocument.open();
         contentDocument.write(this.responseText);

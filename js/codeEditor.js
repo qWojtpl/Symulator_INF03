@@ -30,12 +30,23 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
     });
 
+    editor.addEventListener("dragenter", (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "none";
+    });
+
+    editor.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "none";
+    });
+
     editor.addEventListener("input", () => {
         updateEditorColors(editor);
         checkChildren(editor);
+        updateEditorSummary(editor, false);
     });
 
-    editor.addEventListener("mousedown", () => {
+    editor.addEventListener("mouseup", () => {
         updateEditorSummary(editor, firstMouse);
         firstMouse = false;
     });
@@ -68,7 +79,7 @@ function updateEditorSummary(editor, start) {
     let col = 1;
     if(!start) {
         ln = getCurrentLine(editor) + 1;
-        if(ln == NaN) {
+        if(isNaN(ln)) {
             ln = 1;
         }
         col = document.getSelection().getRangeAt(0).startOffset + 1;
@@ -167,4 +178,8 @@ function checkChildren(editor) {
     editor.innerHTML = "<div><br></div>";
 
 
+}
+
+function getEditorCode(editor) {
+    return editor.textContent;   
 }

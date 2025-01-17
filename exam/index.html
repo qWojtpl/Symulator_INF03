@@ -4,15 +4,20 @@
     <meta charset="UTF-8">
     <title>Egzamin zawodowy - INF.03</title>
     <script src="../js/codeEditor.js"></script>
+    <script src="../js/phpSimulation.js"></script>
     <link rel="stylesheet" href="../css/codeEditor.css">
 </head>
-<body>
+<body style="display:flex;">
     
     <div id="editor-container">
         <pre id="code-editor" contenteditable="true" spellcheck="false"><div><br></div></pre>
         <div id="editor-summary">
         </div>
+        <button onclick="simulate(document.querySelector('iframe').contentDocument, getEditorCode(document.getElementById('code-editor')))">Zapisz</button>
     </div>
+
+    <iframe width=1920 height=1280 style="transform:scale(50%);transform-origin:0 0;"></iframe>
+    
 
 </body>
 </html>
