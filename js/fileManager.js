@@ -38,7 +38,6 @@ function fileClick(i) {
     }
     editorFiles.children[i].classList.add("active");
     loadFileIntoEditor(files[i].getAttribute("filename"));
-    updateEditorSummary(editor, true);
     updateRunButton();
 }
 
@@ -82,11 +81,12 @@ function changeFileName(i) {
     file = editorFiles.children[i];
     let oldName = file.getAttribute("filename");
     let newName = prompt("Wpisz nową nazwę pliku", oldName);
-    if(newName == null || newName == oldName) {
+    if(newName == null || newName == "" || newName == oldName) {
         return;
     }
     if(!checkFileName(newName)) {
         alert("Plik z taką nazwą już istnieje!");
+        return;
     }
     let content = getFile(EXAM_NAME + oldName);
     removeFile(EXAM_NAME + oldName);
@@ -99,11 +99,12 @@ function changeFileName(i) {
 
 function createNewFile() {
     let name = prompt("Wpisz nazwę pliku");
-    if(name == null) {
+    if(name == null || name == "") {
         return;
     }
     if(!checkFileName(name)) {
         alert("Plik z taką nazwą już istnieje!");
+        return;
     }
     saveFile(EXAM_NAME + name, "");
     createFileElement(name, false);
@@ -124,16 +125,6 @@ function deleteExistingFile(i) {
     removeFile(EXAM_NAME + name);
     file.remove();
     fileClick(0);
-}
-
-function updateRunButton() {
-    let name = getCurrentFileName();
-    let button = editorFiles.children[editorFiles.children.length - 1];
-    if(!name.endsWith("html") && !name.endsWith("php")) {
-        button.disabled = true;
-    } else {
-        button.disabled = false;
-    }
 }
 
 function checkFileName(name) {
@@ -173,6 +164,7 @@ function saveCurrentFile() {
     }
     saveFile(EXAM_NAME + currentFileName, getEditorFormattedCode(editor));
     createSaveString(currentFileName);
+    updateEditorSummary(editor, true);
 }
 
 function createSaveString(name) {
