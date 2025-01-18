@@ -87,6 +87,7 @@
 
 .editor-file img {
     width: 24px;
+    padding-left: 10px;
 }
 
 .editor-file:not(.active) {

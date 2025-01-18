@@ -177,6 +177,9 @@ function getEditorFormattedCode(editor) {
 }
 
 function setEditorFormattedCode(editor, code) {
+    if(code == null || code == "" || code == "null") {
+        code = "<div><br></div>";
+    }
     editor.innerHTML = code;
 } 
 

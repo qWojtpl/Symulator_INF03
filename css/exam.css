@@ -38,3 +38,12 @@ iframe#output {
     background-color: #059862;
     cursor: pointer;
 }
+
+.button-run[disabled] {
+    color: white;
+    background-color: #5f6663;
+}
+
+.button-run[disabled]:hover {
+    cursor: not-allowed;
+}
