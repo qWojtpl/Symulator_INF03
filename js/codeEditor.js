@@ -3,12 +3,16 @@ document.addEventListener("DOMContentLoaded", init);
 
 let firstMouse = true;
 let readyToSave = false;
+let regex;
 
 let saveInterval = setInterval(() => {
     readyToSave = true;
 }, 1000 * 10);
 
 function init() {
+
+    loadSyntax();
+
     const editor = document.getElementById("code-editor");
     
     updateEditorSummary(editor, true);
@@ -74,7 +78,14 @@ function init() {
 }
 
 function loadSyntax() {
-    
+    var xhr = new XMLHttpRequest();
+
+    xhr.open("GET", "../js/editorOptions/syntax.json", true);
+    xhr.onload = function () {
+        regex = JSON.parse(this.responseText);
+    };
+
+    xhr.send();
 }
 
 function insertChar(char) {
@@ -128,20 +139,24 @@ function updateEditorColors(editor) {
 
         // Match the regular expression
 
-        let regex = new RegExp("\".+\"", "g");
-        let match = [...divContent.matchAll(regex)];
-
-        for(let j = 0; j < match.length; j++) {
-            let input = match[j][0];
-            let str1 = divContent.substring(0, match[j].index); // Everything before match
-            let str2 = divContent.substring(match[j].index + input.length); // Everything after match
-            editor.children[i].innerHTML = "";
-            editor.children[i].append(str1);
-            let color = document.createElement("span");
-            color.style.color = "red";
-            color.innerText = input;
-            editor.children[i].appendChild(color);
-            editor.children[i].append(str2);
+        for(let j = 0; j < regex.length; j++) {
+            let reg = new RegExp(regex[j].regex, "g");
+            let match = [...divContent.matchAll(reg)];
+            for(let k = 0; k < match.length; k += 2) {
+                let input = match[k][0];
+                if(input == '') {
+                    continue;
+                }
+                let str1 = divContent.substring(0, match[k].index); // Everything before match
+                let str2 = divContent.substring(match[k].index + input.length); // Everything after match
+                editor.children[i].innerHTML = "";
+                editor.children[i].append(str1);
+                let color = document.createElement("span");
+                color.style.color = regex[j].color;
+                color.innerText = input;
+                editor.children[i].appendChild(color);
+                editor.children[i].append(str2);
+            }
         }
         
     }
