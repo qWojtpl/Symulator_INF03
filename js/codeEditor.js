@@ -73,6 +73,10 @@ function init() {
     });
 }
 
+function loadSyntax() {
+    
+}
+
 function insertChar(char) {
     let sel = window.getSelection();
     let restart = false;
@@ -112,17 +116,32 @@ function updateEditorColors(editor) {
     let selection = document.getSelection();
     selection.extend(editor, 0);
     let character = selection.toString().length;
+
     for(let i = 0; i < editor.children.length; i++) {
 
-        let divContent = editor.children[i].textContent;
+        // Remove all previous spans (colors)
+        let divContent = editor.children[i].innerText;
 
-        editor.children[i].innerHTML = editor.children[i].innerHTML.replace(/<span style="color:.+">/g, "").replace(/<\/span>/g, "");
+        divContent = divContent.replace(/<span style="color:.+">/g, "").replace(/<\/span>/g, "");
 
-        let match = [...divContent.matchAll(/".+"/g)];
+        editor.children[i].innerText = divContent;
+
+        // Match the regular expression
+
+        let regex = new RegExp("\".+\"", "g");
+        let match = [...divContent.matchAll(regex)];
 
         for(let j = 0; j < match.length; j++) {
             let input = match[j][0];
-            editor.children[i].innerHTML = divContent.replace(input, "<span style='color:green'>" + input + "</span>");
+            let str1 = divContent.substring(0, match[j].index); // Everything before match
+            let str2 = divContent.substring(match[j].index + input.length); // Everything after match
+            editor.children[i].innerHTML = "";
+            editor.children[i].append(str1);
+            let color = document.createElement("span");
+            color.style.color = "red";
+            color.innerText = input;
+            editor.children[i].appendChild(color);
+            editor.children[i].append(str2);
         }
         
     }
@@ -145,6 +164,9 @@ function getCurrentLine(editor) {
 
     if(node.getAttribute("id") == "code-editor") {
         node = selection.anchorNode;
+    }
+    if(node.tagName == "SPAN") {
+        node = node.parentElement;
     }
 
     for(let i = 0; i < editor.children.length; i++) {
@@ -184,7 +206,6 @@ function setEditorFormattedCode(editor, code) {
 } 
 
 function setEditorCode(editor, code) {
-
     if(code == null) {
         return;
     }
@@ -199,5 +220,4 @@ function setEditorCode(editor, code) {
     }
 
     editor.innerHTML = newCode;
-
 }
