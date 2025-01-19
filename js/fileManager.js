@@ -30,14 +30,14 @@ function init() {
     loadFileIntoEditor(getCurrentFileName());
 }
 
-function fileClick(i) {
+function fileClick(element) {
     saveCurrentFile();
     files = document.querySelectorAll(".editor-file[filename]");
     for(let j = 0; j < files.length; j++) {
         files[j].classList.remove("active");
     }
-    editorFiles.children[i].classList.add("active");
-    loadFileIntoEditor(files[i].getAttribute("filename"));
+    element.classList.add("active");
+    loadFileIntoEditor(element.getAttribute("filename"));
     updateRunButton();
 }
 
@@ -58,18 +58,26 @@ function createFileElement(name, active) {
     element.appendChild(paragraph);
     editorFiles.insertBefore(element, editorFiles.children[editorFiles.children.length - 1]);
     let i = editorFiles.children.length - 2;
-    element.addEventListener("click", () => {
-        fileClick(i);
+    element.addEventListener("click", (e) => {
+        let el = e.target;
+        if(!el.classList.contains("editor-file")) {
+            el = el.parentElement;
+        }
+        fileClick(el);
     });
     element.addEventListener("contextmenu", (e) => {
-        fileContextMenu(i, e);
+        fileContextMenu(e);
     });
     updateRunButton();
 }
 
-function fileContextMenu(i, e) {
+function fileContextMenu(e) {
     e.preventDefault();
-    createContextMenu(e.pageX, e.pageY, ["Otwórz", "Zmień nazwę", "Usuń"], [() => { fileClick(i); }, () => { changeFileName(i); }, () => { deleteExistingFile(i); }]);
+    let element = e.target;
+    if(!element.classList.contains("editor-file")) {
+        element = element.parentElement;
+    }
+    createContextMenu(e.pageX, e.pageY, ["Otwórz", "Zmień nazwę", "Usuń"], [() => { fileClick(element); }, () => { changeFileName(element); }, () => { deleteExistingFile(element); }]);
 }
 
 function newFileContextMenu(e) {
@@ -77,9 +85,8 @@ function newFileContextMenu(e) {
     createContextMenu(e.pageX, e.pageY, ["Stwórz nowy plik"], [() => { createNewFile() }]);
 }
 
-function changeFileName(i) {
-    file = editorFiles.children[i];
-    let oldName = file.getAttribute("filename");
+function changeFileName(element) {
+    let oldName = element.getAttribute("filename");
     let newName = prompt("Wpisz nową nazwę pliku", oldName);
     if(newName == null || newName == "" || newName == oldName) {
         return;
@@ -91,10 +98,11 @@ function changeFileName(i) {
     let content = getFile(EXAM_NAME + oldName);
     removeFile(EXAM_NAME + oldName);
     saveFile(EXAM_NAME + newName, content);
-    file.setAttribute("filename", newName);
+    element.setAttribute("filename", newName);
     let split = newName.split(".");
-    file.children[0].src = "../assets/" + split[split.length - 1] + ".png";
-    file.children[1].innerText = newName;
+    element.children[0].src = "../assets/" + split[split.length - 1] + ".png";
+    element.children[1].innerText = newName;
+    updateRunButton();
 }
 
 function createNewFile() {
@@ -108,23 +116,23 @@ function createNewFile() {
     }
     saveFile(EXAM_NAME + name, "");
     createFileElement(name, false);
-    fileClick(editorFiles.children.length - 2);
+    fileClick(editorFiles.children[editorFiles.children.length - 2]);
+    updateRunButton();
 }
 
-function deleteExistingFile(i) {
+function deleteExistingFile(element) {
     if(editorFiles.children.length == 2) {
         alert("Nie możesz usunąć wszystkich plików!");
         return;
     }
-    let file = editorFiles.children[i];
-    let name = file.getAttribute("fileName");
+    let name = element.getAttribute("fileName");
     let confirmation = confirm("Czy na pewno chcesz usunąć plik " + name + "?");
     if(!confirmation) {
         return;
-    }
+    }    
     removeFile(EXAM_NAME + name);
-    file.remove();
-    fileClick(0);
+    element.remove();
+    fileClick(editorFiles.children[0]);
 }
 
 function checkFileName(name) {

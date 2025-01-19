@@ -71,6 +71,7 @@
 }
 
 .editor-file {
+    max-width: 200px;
     padding-right: 1vw;
     display: flex;
     justify-content: left;
@@ -78,10 +79,8 @@
     color: white;
     gap: 10px;
     border: 1px solid #2b2b2b;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     cursor: pointer;
-    transition: .3s;
+    transition: .2s;
     text-overflow: ellipsis;
 }
 
@@ -90,6 +89,12 @@
     padding-left: 10px;
 }
 
+.editor-file p {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .editor-file:not(.active) {
-    box-shadow: 3px 3px 3px black;
+    box-shadow: 0px 3px 3px black;
 }

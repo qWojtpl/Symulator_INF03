@@ -140,7 +140,7 @@ function updateEditorColors(editor) {
         // Match the regular expression
 
         for(let j = 0; j < regex.length; j++) {
-            let reg = new RegExp(regex[j].regex, "g");
+            let reg = new RegExp(regex[j].regex, regex[j].flag);
             let match = [...divContent.matchAll(reg)];
             for(let k = 0; k < match.length; k += 2) {
                 let input = match[k][0];
@@ -153,6 +153,7 @@ function updateEditorColors(editor) {
                 editor.children[i].append(str1);
                 let color = document.createElement("span");
                 color.style.color = regex[j].color;
+                color.style.backgroundColor = regex[j].backgroundColor;
                 color.innerText = input;
                 editor.children[i].appendChild(color);
                 editor.children[i].append(str2);

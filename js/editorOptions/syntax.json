@@ -1,10 +1,22 @@
 [
     {
-        "regex": "\".+\"",
-        "color": "red"
+        "regex": "\".*\"",
+        "color": "red",
+        "flag": "g"
     },
     {
         "regex": "([a-z_]*)(?=\\(.*\\))",
-        "color": "yellow"
+        "color": "yellow",
+        "flag": "g"
+    },   
+    {
+        "regex": "\\<(?=([1-9a-z =\"]*)(\\>))",
+        "color": "gray",
+        "flag": "g"
+    },
+    {
+        "regex": "\\/\\/.*",
+        "color": "green",
+        "flag": "g"
     }
 ]
