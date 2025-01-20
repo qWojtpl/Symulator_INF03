@@ -48,6 +48,7 @@
     counter-increment: line;
     color: #9cdcfe;
     width: 50vw;
+    tab-size: 30px;
 }
 
 #code-editor div::before {

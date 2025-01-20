@@ -16,16 +16,18 @@ function init() {
         }
         newFileContextMenu(e);
     });
-    if(window.localStorage.length == 0) {
-        createFileElement("index.php", true);
-    } else {
-        for(let i = 0; i < window.localStorage.length; i++) {
-            let key = window.localStorage.key(i);
-            if(!key.startsWith(EXAM_NAME)) {
-                continue;
-            }
-            createFileElement(key.replace(EXAM_NAME, ""), i == 0);
+    let c = 0;
+    for(let i = 0; i < window.localStorage.length; i++) {
+        let key = window.localStorage.key(i);
+        if(!key.startsWith(EXAM_NAME)) {
+            continue;
         }
+        createFileElement(key.replace(EXAM_NAME, ""), i == 0);
+        c++;
+    }
+    if(c == 0) {
+        saveFile(EXAM_NAME + "index.php", "");
+        createFileElement("index.php", true);
     }
     loadFileIntoEditor(getCurrentFileName());
 }
@@ -91,6 +93,10 @@ function changeFileName(element) {
     if(newName == null || newName == "" || newName == oldName) {
         return;
     }
+    if(newName.length > 32) {
+        alert("Nazwa pliku jest za długa!");
+        return;
+    }
     if(!checkFileName(newName)) {
         alert("Plik z taką nazwą już istnieje!");
         return;
@@ -108,6 +114,10 @@ function changeFileName(element) {
 function createNewFile() {
     let name = prompt("Wpisz nazwę pliku");
     if(name == null || name == "") {
+        return;
+    }
+    if(name.length > 32) {
+        alert("Nazwa pliku jest za długa!");
         return;
     }
     if(!checkFileName(name)) {
@@ -143,18 +153,6 @@ function checkFileName(name) {
         }
     }
     return true;
-}
-
-function getFile(name) {
-    return window.localStorage.getItem(name);
-}
-
-function saveFile(name, content) {
-    window.localStorage.setItem(name, content);
-}
-
-function removeFile(name) {
-    window.localStorage.removeItem(name);
 }
 
 function getCurrentFileName() {
