@@ -5,7 +5,6 @@ const EXAM_NAME = "inf_034";
 let editor;
 let editorFiles;
 let saveString = [];
-let files = [];
 
 function init() {
     editor = document.getElementById("code-editor");
@@ -34,7 +33,7 @@ function init() {
 
 function fileClick(element) {
     saveCurrentFile();
-    files = document.querySelectorAll(".editor-file[filename]");
+    let files = document.querySelectorAll(".editor-file[filename]");
     for(let j = 0; j < files.length; j++) {
         files[j].classList.remove("active");
     }

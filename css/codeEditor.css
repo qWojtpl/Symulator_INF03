@@ -69,6 +69,7 @@
 #editor-files {
     display: flex;
     width: 100%;
+    flex-wrap: wrap;
 }
 
 .editor-file {

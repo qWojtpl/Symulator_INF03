@@ -1,6 +1,6 @@
 [
     {
-        "regex": "\".*\"",
+        "regex": "\"[a-zA-Z0-9 _]*\"",
         "color": "red",
         "flag": "g"
     },

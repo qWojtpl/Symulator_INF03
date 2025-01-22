@@ -117,7 +117,7 @@ function updateEditorSummary(editor, start) {
         if(isNaN(ln)) {
             ln = 1;
         }
-        col = document.getSelection().getRangeAt(0).startOffset + 1;
+        col = getCurrentColumn() + 1;
     }
     summary.innerHTML = "<span id='save-string'>" + getSaveString() + "</span><span>" + charset + "</span><span>Ln " + ln + ", Col " + col + "</span><span>Lines: " + lines + "</span>";
 }
@@ -190,6 +190,30 @@ function getCurrentLine(editor) {
             return i;
         }
     }
+}
+
+function getCurrentColumn() {
+    let range = document.getSelection().getRangeAt(0);
+    let startContainer = range.startContainer;
+    let c = range.startOffset;
+    if(startContainer.parentNode.tagName == "SPAN") {
+        let absoluteChildren = startContainer.parentNode.parentNode.childNodes;
+        for(let i = 0; i < absoluteChildren.length; i++) {
+            if(absoluteChildren[i] == startContainer.parentNode) {
+                break;
+            }
+            c += absoluteChildren[i].textContent.length;
+        }
+    } else {
+        let absoluteChildren = startContainer.parentNode.childNodes;
+        for(let i = 0; i < absoluteChildren.length; i++) {
+            if(absoluteChildren[i] == startContainer) {
+                break;
+            }
+            c += absoluteChildren[i].textContent.length;
+        }
+    }
+    return c;
 }
 
 function checkChildren(editor) {

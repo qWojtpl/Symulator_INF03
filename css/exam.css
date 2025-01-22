@@ -7,7 +7,7 @@ main {
 }
 
 #output-container {
-    width: 100%;
+    width: 49vw;
     height: 82vh;
 }
 
@@ -18,7 +18,7 @@ iframe#output {
 }
 
 #editor-container {
-    width: 100vw;
+    width: 51vw;
     height: 82vh;
 }
 
