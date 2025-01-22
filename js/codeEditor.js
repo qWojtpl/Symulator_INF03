@@ -196,6 +196,9 @@ function getCurrentColumn() {
     let range = document.getSelection().getRangeAt(0);
     let startContainer = range.startContainer;
     let c = range.startOffset;
+    if(c == 0) {
+        return 0;
+    }
     if(startContainer.parentNode.tagName == "SPAN") {
         let absoluteChildren = startContainer.parentNode.parentNode.childNodes;
         for(let i = 0; i < absoluteChildren.length; i++) {
