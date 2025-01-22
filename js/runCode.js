@@ -64,11 +64,10 @@ function setOutput(contentDocument, outputCode) {
         let style = styles[i];
         let source = style.getAttribute("href");
         style.removeAttribute("href");
-        style.setAttribute("ref", source);
-        let head = newDocument.querySelector("head");
+        style.setAttribute("sref", source);
         let styleElement = newDocument.createElement("style");
         styleElement.innerText = parser.parseFromString(getFile(EXAM_NAME + source), "text/html").documentElement.textContent;
-        head.appendChild(styleElement);
+        style.parentElement.insertBefore(styleElement, style.nextSibling);
     }
     contentDocument.write(newDocument.documentElement.innerHTML);
     contentDocument.close();

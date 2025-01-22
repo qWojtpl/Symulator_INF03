@@ -1,0 +1,9 @@
+.hint-menu {
+    position: absolute;
+    z-index: 100;
+    background-color: #1f1f1f;
+    border-radius: 3px;
+    border: 1px solid #454545;
+    padding-bottom: 3px;
+    width: 200px;
+}

@@ -29,19 +29,19 @@ function init() {
         if(e.key == "Enter" && e.shiftKey) {
             e.preventDefault();
         }
-        updateEditorSummary(editor, false);
     });
 
     editor.addEventListener("keyup", () => {
+        updateEditorColors(editor);
         updateEditorSummary(editor, false);
     });
 
     editor.addEventListener("paste", (e) => {
         e.preventDefault();
-        var text = '';
-        if (e.clipboardData || e.originalEvent.clipboardData) {
-        text = (e.originalEvent || e).clipboardData.getData('text/plain');
-        } else if (window.clipboardData) {
+        let text = "";
+        if(e.clipboardData || e.originalEvent.clipboardData) {
+            text = (e.originalEvent || e).clipboardData.getData('text/plain');
+        } else if(window.clipboardData) {
             text = window.clipboardData.getData('Text');
         }
         if(document.queryCommandSupported('insertText')) {
@@ -62,13 +62,12 @@ function init() {
     });
 
     editor.addEventListener("input", () => {
-        updateEditorColors(editor);
         checkChildren(editor);
         if(readyToSave) {
             readyToSave = false;
             saveCurrentFile();
         }
-        updateEditorSummary(editor, false);
+        updateHintMenu(editor, getCurrentLine(editor), getCurrentColumn());
     });
 
     editor.addEventListener("mouseup", () => {
