@@ -70,5 +70,30 @@ function setOutput(contentDocument, outputCode) {
         style.parentElement.insertBefore(styleElement, style.nextSibling);
     }
     contentDocument.write(newDocument.documentElement.innerHTML);
+    let links = contentDocument.querySelectorAll("a[href]");
+    for(let i = 0; i < links.length; i++) {
+        let link = links[i];
+        link.addEventListener("click", (e) => {
+            e.preventDefault();
+            linkClick(link.getAttribute("href"));
+        });
+    }
     contentDocument.close();
+}
+
+function linkClick(href) {
+
+    const editorFiles = document.getElementById("editor-files");
+
+    for(let i = 0; i < editorFiles.children.length; i++) {
+        let file = editorFiles.children[i];
+        if(file.getAttribute("filename") == href) {
+            fileClick(file);
+            buttonClick();
+            return;
+        }
+    }
+
+    window.open(href, "_blank");
+
 }
