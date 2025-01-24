@@ -36,6 +36,8 @@ function simulate(contentDocument, code) {
     
     var data = new FormData();
     data.append("vm-sandbox-code", code);
+    data.append("get-test", "1234 :)");
+    data.append("post-test", "1234 :)");
 
     var xhr = new XMLHttpRequest();
 

@@ -13,9 +13,24 @@
     require_once("../vendor/autoload.php");
 
     $sandbox = new PHPSandbox\PHPSandbox;
-    $sandbox->whitelistFunc("date", "function");
+    $sandbox->whitelistFunc("date", "function", "var_dump");
     $sandbox->setOption("allow_functions", "true");
     $sandbox->defineFunc('mysqli_connect', function($s) { echo "brbr ".$s; });
+
+    $getVariables = [];
+    $postVariables = [];
+
+    foreach($_POST as $key => $value)
+    {
+        if(str_starts_with($key, "get-")) {
+            $getVariables[str_replace("get-", "", $key)] = $value;
+        } else if(str_starts_with($key, "post-")) {
+            $postVariables[str_replace("post-", "", $key)] = $value;
+        }
+    }
+
+    $sandbox->defineSuperGlobal("_POST", $postVariables);
+    $sandbox->defineSuperGlobal("_GET", $getVariables);
 
     $code = $_POST["vm-sandbox-code"];
 

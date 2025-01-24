@@ -65,8 +65,15 @@ function init() {
         }
     });
 
-    editor.addEventListener("keyup", () => {
-        targetColumn = getCurrentColumn();
+    editor.addEventListener("keyup", (e) => {
+        let column = getCurrentColumn();
+        if(e.key != "ArrowLeft" && e.key != "ArrowRight") {
+            if(column > targetColumn) {
+                targetColumn = column;
+            }
+        } else {
+            targetColumn = column;
+        }
     });
 
     editor.addEventListener("paste", (e) => {
@@ -108,7 +115,10 @@ function init() {
     editor.addEventListener("mouseup", () => {
         updateEditorSummary(editor, firstMouse);
         firstMouse = false;
-        targetColumn = getCurrentColumn();
+        let column = getCurrentColumn();
+        if(column > targetColumn) {
+            targetColumn = column;
+        }
     });
 }
 
