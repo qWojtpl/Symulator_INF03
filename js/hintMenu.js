@@ -21,6 +21,7 @@ function createHintMenu() {
         text.innerText = commands[i].command;
         button.appendChild(image);
         button.appendChild(text);
+        button.setAttribute("language", commands[i].language);
         hintMenu.appendChild(button);
     }
 }
@@ -43,17 +44,30 @@ function updateHintMenu(editor, ln, col) {
     hintMenu.style.left = (measureWidth(child.textContent.substring(0, col)) + 50) + "px";
     let start = 0;
     for(let i = col; i >= 0; i--) {
-        if(child.textContent.charAt(i) == " " || child.textContent.charAt(i) == "(" || child.textContent.charAt(i) == ".") {
+        let char =  child.textContent.charAt(i);
+        if(char == " " || char == "(" || char == "." || char == "	" || char == "<" || char == "/") {
             start = i + 1;
             break;
         }
     }
     let currentCommand = child.textContent.substring(start, col);
     let active = 0;
+    let fileExtension = getCurrentFileName().split(".").pop();
     for(let i = 0; i < hintMenu.children.length; i++) {
         let child = hintMenu.children[i];
         let textChild = child.children[1];
+        let language = child.getAttribute("language");
         if(textChild.textContent.toLowerCase().startsWith(currentCommand.toLowerCase())) {
+            if(language != "html" && language != "css") {
+                if(!language.includes(fileExtension)) {
+                    child.style.display = "none";
+                    continue;
+                }
+            }
+            if(language == "html" && fileExtension == "css") {
+                child.style.display = "none";
+                continue;
+            }
             child.style.display = "flex";
             textChild.innerHTML = child.textContent.replace(currentCommand, "<mark>" + currentCommand + "</mark>");
             active++;

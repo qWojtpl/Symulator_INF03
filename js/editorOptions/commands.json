@@ -38,5 +38,41 @@
     {
         "command": "background-color",
         "language": "css"
+    },
+    {
+        "command": "color",
+        "language": "css"
+    },
+    {
+        "command": ":hover",
+        "language": "css"
+    },
+    {
+        "command": "!DOCTYPE",
+        "language": "html"  
+    },
+    {
+        "command": "html",
+        "language": "html"
+    },
+    {
+        "command": "head",
+        "language": "html"
+    },
+    {
+        "command": "link",
+        "language": "html"
+    },
+    {
+        "command": "body",
+        "language": "html"
+    },
+    {
+        "command": "h1",
+        "language": "html"
+    },
+    {
+        "command": "input",
+        "language": "html"
     }
 ]
