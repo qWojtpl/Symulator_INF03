@@ -6,4 +6,22 @@
     border: 1px solid #454545;
     padding-bottom: 3px;
     width: 200px;
+    max-height: 200px;
+    overflow: auto;
+}
+
+.hint-menu button {
+    padding-left: 1vw;
+    width: 100%;
+    text-align: left;
+    background-color: transparent;
+    color: #bdbdbd;
+    border: none;
+}
+
+.hint-menu button:hover {
+    border-radius: 2px;
+    background-color: #0078d4;
+    color: white;
+    cursor: pointer;
 }

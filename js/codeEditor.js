@@ -31,11 +31,6 @@ function init() {
         }
     });
 
-    editor.addEventListener("keyup", () => {
-        updateEditorColors(editor);
-        updateEditorSummary(editor, false);
-    });
-
     editor.addEventListener("paste", (e) => {
         e.preventDefault();
         let text = "";
@@ -68,6 +63,8 @@ function init() {
             saveCurrentFile();
         }
         updateHintMenu(editor, getCurrentLine(editor), getCurrentColumn());
+        updateEditorColors(editor);
+        updateEditorSummary(editor, false);
     });
 
     editor.addEventListener("mouseup", () => {
@@ -123,9 +120,8 @@ function updateEditorSummary(editor, start) {
 
 function updateEditorColors(editor) {
 
-    let selection = document.getSelection();
-    selection.extend(editor, 0);
-    let character = selection.toString().length;
+    let line = getCurrentLine(editor);
+    let column = getCurrentColumn();
 
     for(let i = 0; i < editor.children.length; i++) {
 
@@ -160,10 +156,29 @@ function updateEditorColors(editor) {
         }
         
     }
-    selection.collapse(editor, 0);
 
-    for(let i = 0; i < character; i++) {
-        selection.modify("move", "forward", "character");
+    setCursorPosition(editor.children[line], column);
+}
+
+function setCursorPosition(lineElement, position) {
+
+    let selection = document.getSelection();
+    let range = selection.getRangeAt(0);
+
+    let total = 0;
+
+    for(let i = 0; i < lineElement.childNodes.length; i++) {
+        let indexStart = total;
+        total += lineElement.childNodes[i].textContent.length;
+        if(total >= position) {
+            let rangeElement = lineElement.childNodes[i];
+            if(rangeElement.tagName == "SPAN") {
+                rangeElement = rangeElement.childNodes[0];
+            }
+            range.setStart(rangeElement, position - indexStart); // column: 27, current child start: 14, so range starts now from 27-14
+            range.collapse(true);
+            break;
+        }
     }
 }
 
