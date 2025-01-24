@@ -35,7 +35,7 @@ function buttonClick() {
 function simulate(contentDocument, code) {
     
     var data = new FormData();
-    data.append("code", code);
+    data.append("vm-sandbox-code", code);
 
     var xhr = new XMLHttpRequest();
 

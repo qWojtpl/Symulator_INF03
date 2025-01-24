@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", init);
 let firstMouse = true;
 let readyToSave = false;
 let regex;
+let targetColumn;
 
 let saveInterval = setInterval(() => {
     readyToSave = true;
@@ -29,6 +30,43 @@ function init() {
         if(e.key == "Enter" && e.shiftKey) {
             e.preventDefault();
         }
+        if(e.key == "ArrowUp") {
+            e.preventDefault();
+            let line = getCurrentLine(editor);
+            if(line != 0) {
+                let column = targetColumn;
+                if(targetColumn == null) {
+                    column = getCurrentColumn();
+                    targetColumn = column;
+                }
+                let textLength = editor.children[line - 1].textContent.length;
+                let pos = textLength;
+                if(textLength >= column) {
+                    pos = column;
+                }
+                setCursorPosition(editor.children[line - 1], pos); 
+            }
+        } else if(e.key == "ArrowDown") {
+            e.preventDefault();
+            let line = getCurrentLine(editor);
+            if(line != editor.children.length - 1) {
+                let column = targetColumn;
+                if(targetColumn == null) {
+                    column = getCurrentColumn();
+                    targetColumn = column;
+                }
+                let textLength = editor.children[line + 1].textContent.length;
+                let pos = textLength;
+                if(textLength >= column) {
+                    pos = column;
+                }
+                setCursorPosition(editor.children[line + 1], pos); 
+            }
+        }
+    });
+
+    editor.addEventListener("keyup", () => {
+        targetColumn = getCurrentColumn();
     });
 
     editor.addEventListener("paste", (e) => {
@@ -70,6 +108,7 @@ function init() {
     editor.addEventListener("mouseup", () => {
         updateEditorSummary(editor, firstMouse);
         firstMouse = false;
+        targetColumn = getCurrentColumn();
     });
 }
 

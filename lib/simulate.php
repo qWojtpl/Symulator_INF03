@@ -17,7 +17,7 @@
     $sandbox->setOption("allow_functions", "true");
     $sandbox->defineFunc('mysqli_connect', function($s) { echo "brbr ".$s; });
 
-    $code = $_POST["code"];
+    $code = $_POST["vm-sandbox-code"];
 
     $code = str_replace("?>\r\n", "?>", $code);
 
