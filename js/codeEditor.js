@@ -23,7 +23,7 @@ function init() {
             if(e.shiftKey) {
 
             } else {  
-                insertChar("\t");
+                insertChar("	");
             }
         }
         if(e.key == "Enter" && e.shiftKey) {
@@ -85,21 +85,7 @@ function loadSyntax() {
 }
 
 function insertChar(char) {
-    let sel = window.getSelection();
-    let restart = false;
-    if(sel.rangeCount) {
-        range = sel.getRangeAt(0);
-        if(range.getClientRects().length <= 1) {
-            restart = true;
-            range.deleteContents();
-        }
-        let node = document.createTextNode(char);
-        range.insertNode(node);
-        if(restart) {
-            range.setStart(node, 1);
-            range.setEnd(node, 1);
-        }
-    }
+    document.execCommand('insertText', false, char);
 }
 
 function updateEditorSummary(editor, start) {
@@ -134,28 +120,54 @@ function updateEditorColors(editor) {
 
         // Match the regular expression
 
+        let allMatches = [];
+
         for(let j = 0; j < regex.length; j++) {
             let reg = new RegExp(regex[j].regex, regex[j].flag);
             let match = [...divContent.matchAll(reg)];
-            for(let k = 0; k < match.length; k += 2) {
-                let input = match[k][0];
-                if(input == '') {
+            for(let k = 0; k < match.length; k++) {
+                if(match[k][0] == '') {
                     continue;
                 }
-                let str1 = divContent.substring(0, match[k].index); // Everything before match
-                let str2 = divContent.substring(match[k].index + input.length); // Everything after match
-                editor.children[i].innerHTML = "";
-                editor.children[i].append(str1);
-                let color = document.createElement("span");
-                color.style.color = regex[j].color;
-                color.style.backgroundColor = regex[j].backgroundColor;
-                color.innerText = input;
-                editor.children[i].appendChild(color);
-                editor.children[i].append(str2);
+                allMatches[allMatches.length] = {
+                    input: match[k][0],
+                    index: match[k].index,
+                    color: regex[j].color,
+                    backgroundColor: regex[j].backgroundColor
+                }
             }
+        }
+
+        // Sort by index
+
+        allMatches.sort(function(a, b) {
+            return a.index - b.index;
+        });
+
+        // Insert colors and the rest of the text
+
+        let start = 0;
+        editor.children[i].innerHTML = "";
+
+        for(let j = 0; j < allMatches.length; j++) {
+            let str = divContent.substring(start, allMatches[j].index);
+            start = allMatches[j].index + allMatches[j].input.length;
+            editor.children[i].append(str);
+            let color = document.createElement("span");
+            color.style.color = allMatches[j].color;
+            color.style.backgroundColor = allMatches[j].backgroundColor;
+            color.innerText = allMatches[j].input;
+            editor.children[i].appendChild(color);
+        }
+
+        if(start != divContent.length) {
+            let str = divContent.substring(start, divContent.length);
+            editor.children[i].append(str);
         }
         
     }
+
+    // Set cursor to the previous position (changing DOM resets cursor position to the beggining of the line)
 
     setCursorPosition(editor.children[line], column);
 }

@@ -23,6 +23,9 @@ function createHintMenu() {
         button.appendChild(text);
         button.setAttribute("language", commands[i].language);
         hintMenu.appendChild(button);
+        button.addEventListener("click", () => {
+            insertChar(text.innerText);
+        });
     }
 }
 

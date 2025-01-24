@@ -1,6 +1,6 @@
 [
     {
-        "regex": "\"[a-zA-Z0-9 _]*\"",
+        "regex": "\"[a-zA-Z0-9 _.]*\"",
         "color": "red",
         "flag": "g"
     },
@@ -10,13 +10,23 @@
         "flag": "g"
     },   
     {
-        "regex": "\\<(?=([1-9a-z =\"]*)(\\>))",
+        "regex": "\\<(?=([1-9a-z =\"./]*)(\\>))",
         "color": "gray",
         "flag": "g"
     },
     {
         "regex": "\\/\\/.*",
         "color": "green",
+        "flag": "g"
+    },
+    {
+        "regex": "<!DOCTYPE html>",
+        "color": "lightgray",
+        "flag": "g"
+    },
+    {
+        "regex": "\t+",
+        "backgroundColor": "rgba(0, 0, 100, 0.1)",
         "flag": "g"
     }
 ]
