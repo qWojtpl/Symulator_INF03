@@ -64,7 +64,7 @@
 
     for($i = 0; $i < count($blocks); $i++) { 
         if(!in_array($i, $phpIndexes)) {
-            $newCodeBlock .= "echo \"".addslashes($blocks[$i])."\"; ";
+            $newCodeBlock .= "echo '".addslashes($blocks[$i])."'; ";
         } else {
             $newCodeBlock .= $blocks[$i];
         }

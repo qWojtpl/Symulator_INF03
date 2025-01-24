@@ -6,6 +6,7 @@ let commands;
 
 function init() {
     loadCommands();
+    document.addEventListener("click", removeHintMenu);
 }
 
 function createHintMenu() {
@@ -14,37 +15,55 @@ function createHintMenu() {
     document.querySelector("body").appendChild(hintMenu);
     for(let i = 0; i < commands.length; i++) {
         let button = document.createElement("button");
-        button.innerText = commands[i].command;
+        let image = document.createElement("img");
+        image.src = "../assets/" + commands[i].language + ".png"; 
+        let text = document.createElement("span");
+        text.innerText = commands[i].command;
+        button.appendChild(image);
+        button.appendChild(text);
         hintMenu.appendChild(button);
     }
 }
 
 function updateHintMenu(editor, ln, col) {
-    if(hintMenu == null) {
-        createHintMenu();
-    }
     if(col == 0) {
+        removeHintMenu();
         return;
     }
     let child = editor.children[ln];
+    if(child == null) {
+        removeHintMenu();
+        return;
+    }
+    if(hintMenu == null) {
+        createHintMenu();
+    }
     let rect = child.getBoundingClientRect();
     hintMenu.style.top = (rect.y + 24) + "px";
     hintMenu.style.left = (measureWidth(child.textContent.substring(0, col)) + 50) + "px";
     let start = 0;
     for(let i = col; i >= 0; i--) {
-        if(child.textContent.charAt(i) == " ") {
+        if(child.textContent.charAt(i) == " " || child.textContent.charAt(i) == "(" || child.textContent.charAt(i) == ".") {
             start = i + 1;
             break;
         }
     }
     let currentCommand = child.textContent.substring(start, col);
+    let active = 0;
     for(let i = 0; i < hintMenu.children.length; i++) {
         let child = hintMenu.children[i];
-        if(child.textContent.includes(currentCommand)) {
-            child.style.display = "block";
+        let textChild = child.children[1];
+        if(textChild.textContent.toLowerCase().startsWith(currentCommand.toLowerCase())) {
+            child.style.display = "flex";
+            textChild.innerHTML = child.textContent.replace(currentCommand, "<mark>" + currentCommand + "</mark>");
+            active++;
         } else {
             child.style.display = "none";
         }
+    }
+
+    if(active == 0) {
+        removeHintMenu();
     }
 }
 
@@ -61,6 +80,8 @@ function removeHintMenu() {
     if(hintMenu == null) {
         return;
     }
+    hintMenu.remove();
+    hintMenu = null;
 }
 
 function loadCommands() {

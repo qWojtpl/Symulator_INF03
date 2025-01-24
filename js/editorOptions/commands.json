@@ -1,6 +1,42 @@
 [
     {
         "command": "date()",
-        "language": "PHP"
+        "language": "php"
+    },
+    {
+        "command": "mysqli_connect($server, $user, $password, $db)",
+        "language": "php"
+    },
+    {
+        "command": "echo",
+        "language": "php"
+    },
+    {
+        "command": "return",
+        "language": "phpjs"
+    },
+    {
+        "command": "function",
+        "language": "phpjs"
+    },
+    {
+        "command": "document",
+        "language": "js"
+    },
+    {
+        "command": "getElementById()",
+        "language": "js"
+    },
+    {
+        "command": "getElementsByClassName()",
+        "language": "js"
+    },
+    {
+        "command": "querySelector()",
+        "language": "js"
+    },
+    {
+        "command": "background-color",
+        "language": "css"
     }
 ]

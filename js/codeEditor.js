@@ -272,7 +272,6 @@ function setEditorCode(editor, code) {
     let newCode = "";
 
     for(let i = 0; i < split.length; i++) {
-        console.log(split[i]);
         newCode += "<div>" + split[i] + "</div>";
     }
 
