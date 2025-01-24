@@ -23,7 +23,14 @@ function buttonClick() {
     }
     saveCurrentFile();
     let name = getCurrentFileName();
-    let contentDocument = document.getElementById("output").contentDocument;
+    let oldFrame = document.getElementById("output");
+    if(oldFrame != null) {
+        oldFrame.remove();
+    }
+    let iframe = document.createElement("iframe");
+    iframe.setAttribute("id", "output");
+    document.getElementById("output-container").appendChild(iframe);
+    let contentDocument = iframe.contentDocument;
     let editorCode = getEditorCode(document.getElementById("code-editor"));
     if(name.endsWith("html")) {
         setOutput(contentDocument, editorCode);
