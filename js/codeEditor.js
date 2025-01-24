@@ -126,9 +126,6 @@ function updateEditorColors(editor) {
             let reg = new RegExp(regex[j].regex, regex[j].flag);
             let match = [...divContent.matchAll(reg)];
             for(let k = 0; k < match.length; k++) {
-                if(match[k][0] == '') {
-                    continue;
-                }
                 allMatches[allMatches.length] = {
                     input: match[k][0],
                     index: match[k].index,
@@ -150,6 +147,9 @@ function updateEditorColors(editor) {
         editor.children[i].innerHTML = "";
 
         for(let j = 0; j < allMatches.length; j++) {
+            if(allMatches[j].index < start) {
+                continue;
+            }
             let str = divContent.substring(start, allMatches[j].index);
             start = allMatches[j].index + allMatches[j].input.length;
             editor.children[i].append(str);

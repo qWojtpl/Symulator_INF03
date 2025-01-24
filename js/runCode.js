@@ -57,7 +57,7 @@ function setOutput(contentDocument, outputCode) {
         let script = scripts[i];
         let source = script.getAttribute("src");
         script.removeAttribute("src");
-        script.innerText = parser.parseFromString(getFile(EXAM_NAME + source), "text/html").documentElement.textContent;
+        script.innerHTML = parser.parseFromString(getFile(EXAM_NAME + source), "text/html").documentElement.textContent;
     }
     let styles = newDocument.querySelectorAll("link[rel=stylesheet]");
     for(let i = 0; i < styles.length; i++) {
@@ -66,7 +66,7 @@ function setOutput(contentDocument, outputCode) {
         style.removeAttribute("href");
         style.setAttribute("sref", source);
         let styleElement = newDocument.createElement("style");
-        styleElement.innerText = parser.parseFromString(getFile(EXAM_NAME + source), "text/html").documentElement.textContent;
+        styleElement.innerHTML = parser.parseFromString(getFile(EXAM_NAME + source), "text/html").documentElement.textContent;
         style.parentElement.insertBefore(styleElement, style.nextSibling);
     }
     contentDocument.write(newDocument.documentElement.innerHTML);
