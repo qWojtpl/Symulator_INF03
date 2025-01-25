@@ -79,6 +79,15 @@ function setOutput(contentDocument, outputCode) {
         styleElement.innerHTML = parser.parseFromString(getFile(EXAM_NAME + source), "text/html").documentElement.textContent;
         style.parentElement.insertBefore(styleElement, style.nextSibling);
     }
+    let images = newDocument.querySelectorAll("img");
+    for(let i = 0; i < images.length; i++) {
+        let image = images[i];
+        let source = image.getAttribute("src");
+        if(source.startsWith("http://") || source.startsWith("https://")) {
+            continue;
+        }
+        image.setAttribute("src", "../assets/" + EXAM_NAME + "/" + source);
+    }
     contentDocument.write(newDocument.documentElement.innerHTML);
     if(outputCode.startsWith("<!DOCTYPE html>")) {
         contentDocument.querySelector("html").setAttribute("doctype", "html5");
