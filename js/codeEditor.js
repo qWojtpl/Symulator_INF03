@@ -12,6 +12,11 @@ let saveInterval = setInterval(() => {
 
 function init() {
 
+    window.addEventListener("beforeunload", (e) => {
+        e.preventDefault();
+        e.returnValue = true;
+    });
+
     loadSyntax();
 
     const editor = document.getElementById("code-editor");

@@ -29,7 +29,8 @@ function buttonClick() {
     }
     let iframe = document.createElement("iframe");
     iframe.setAttribute("id", "output");
-    document.getElementById("output-container").appendChild(iframe);
+    let container = document.getElementById("output-container");
+    container.insertBefore(iframe, container.childNodes[1]);
     let contentDocument = iframe.contentDocument;
     let editorCode = getEditorCode(document.getElementById("code-editor"));
     if(name.endsWith("html")) {
