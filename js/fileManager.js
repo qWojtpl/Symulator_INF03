@@ -40,6 +40,7 @@ function fileClick(element) {
     element.classList.add("active");
     loadFileIntoEditor(element.getAttribute("filename"));
     updateRunButton();
+    updateEditorSummary(editor, true);
 }
 
 function createFileElement(name, active) {

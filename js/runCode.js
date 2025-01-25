@@ -22,15 +22,9 @@ function buttonClick() {
         return;
     }
     saveCurrentFile();
+    cardClick(document.getElementById("output-summary").children[0]);
     let name = getCurrentFileName();
-    let oldFrame = document.getElementById("output");
-    if(oldFrame != null) {
-        oldFrame.remove();
-    }
-    let iframe = document.createElement("iframe");
-    iframe.setAttribute("id", "output");
-    let container = document.getElementById("output-container");
-    container.insertBefore(iframe, container.childNodes[1]);
+    let iframe = swapFrames();
     let contentDocument = iframe.contentDocument;
     let editorCode = getEditorCode(document.getElementById("code-editor"));
     if(name.endsWith("html")) {
@@ -118,4 +112,17 @@ function linkClick(href) {
 
     window.open(href, "_blank");
 
+}
+
+function swapFrames() {
+    let oldFrame = document.getElementById("output");
+    if(oldFrame != null) {
+        oldFrame.remove();
+    }
+    let iframe = document.createElement("iframe");
+    iframe.classList.add("output-frame");
+    iframe.setAttribute("id", "output");
+    let container = document.getElementById("output-container");
+    container.insertBefore(iframe, container.childNodes[1]);
+    return iframe;
 }
