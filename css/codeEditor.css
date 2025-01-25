@@ -86,6 +86,10 @@
     text-overflow: ellipsis;
 }
 
+.editor-file:hover {
+    background-color: #2b2b2b;
+}
+
 .editor-file img {
     width: 24px;
     padding-left: 10px;

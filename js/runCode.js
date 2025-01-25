@@ -80,6 +80,9 @@ function setOutput(contentDocument, outputCode) {
         style.parentElement.insertBefore(styleElement, style.nextSibling);
     }
     contentDocument.write(newDocument.documentElement.innerHTML);
+    if(outputCode.startsWith("<!DOCTYPE html>")) {
+        contentDocument.querySelector("html").setAttribute("doctype", "html5");
+    }
     let links = contentDocument.querySelectorAll("a[href]");
     for(let i = 0; i < links.length; i++) {
         let link = links[i];
