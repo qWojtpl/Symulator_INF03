@@ -55,12 +55,12 @@ function getCardIndex(element) {
 function hideAllFrames() {
     document.getElementById("output").style.display = "none";
     document.getElementById("exam-sheet").style.display = "none";
+    document.getElementById("photo-editor").style.display = "none";
 }
 
 function handleCodeResult() {
     hideAllFrames();
     document.getElementById("output").style.display = "block";
-    
 }
 
 function handleExamSheet() {
@@ -70,4 +70,9 @@ function handleExamSheet() {
         examFrame.src = "../assets/" + EXAM_NAME + "/" + EXAM_NAME + "_SG.pdf";
     }
     examFrame.style.display = "block";
+}
+
+function handlePhotos() {
+    hideAllFrames();
+    document.getElementById("photo-editor").style.display = "block";
 }
