@@ -130,7 +130,7 @@ function init() {
 function loadSyntax() {
     var xhr = new XMLHttpRequest();
 
-    xhr.open("GET", "../js/editorOptions/syntax.json", true);
+    xhr.open("GET", "../js/options/syntax.json", true);
     xhr.onload = function () {
         regex = JSON.parse(this.responseText);
     };

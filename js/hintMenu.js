@@ -104,7 +104,7 @@ function removeHintMenu() {
 function loadCommands() {
     var xhr = new XMLHttpRequest();
 
-    xhr.open("GET", "../js/editorOptions/commands.json", true);
+    xhr.open("GET", "../js/options/commands.json", true);
     xhr.onload = function () {
         commands = JSON.parse(this.responseText);
     };
