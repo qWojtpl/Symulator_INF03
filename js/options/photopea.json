@@ -1,0 +1,9 @@
+{
+    "files": [ 
+        "https://www.photopea.com/api/img2/pug.png"
+    ],
+    "environment": {
+        "menus": [0,1,1,1,1,1,1,1,1],
+        "lang": "pl"
+    }
+}

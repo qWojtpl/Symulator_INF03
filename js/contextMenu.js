@@ -23,4 +23,5 @@ function removeContextMenu() {
         return;
     }
     contextMenu.remove();
+    contextMenu = null;
 }

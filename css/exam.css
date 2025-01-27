@@ -41,11 +41,7 @@ iframe.output-frame {
     justify-content: left;
 }
 
-#exam-sheet {
-    display: none;
-}
-
-#photo-editor {
+#exam-sheet, #photo-editor {
     display: none;
 }
 

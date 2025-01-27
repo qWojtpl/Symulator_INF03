@@ -5,7 +5,7 @@ let button;
 
 function init() {
     button = document.getElementById("run-button");
-    button.addEventListener("click", buttonClick);
+    button.addEventListener("click", runButtonClick);
 }
 
 function updateRunButton() {
@@ -17,7 +17,7 @@ function updateRunButton() {
     }
 }
 
-function buttonClick() {
+function runButtonClick() {
     if(button.disabled) {
         return;
     }
@@ -30,11 +30,11 @@ function buttonClick() {
     if(name.endsWith("html")) {
         setOutput(contentDocument, editorCode);
     } else if(name.endsWith("php")) { 
-        simulate(contentDocument, editorCode);
+        simulatePHP(contentDocument, editorCode);
     }
 }
 
-function simulate(contentDocument, code) {
+function simulatePHP(contentDocument, code) {
     
     var data = new FormData();
     data.append("vm-sandbox-code", code);
@@ -105,7 +105,7 @@ function linkClick(href) {
         let file = editorFiles.children[i];
         if(file.getAttribute("filename") == href) {
             fileClick(file);
-            buttonClick();
+            runButtonClick();
             return;
         }
     }
