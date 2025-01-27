@@ -1,16 +1,16 @@
 [
     {
         "regex": "\"[^\"]*\"",
-        "color": "red",
+        "color": "#c39178",
         "flag": "g"
     },
     {
         "regex": "([a-zA-Z_]*)(?=\\(.*\\))",
-        "color": "yellow",
+        "color": "#dcdcaa",
         "flag": "g"
     },
     {
-        "regex": "<|>",
+        "regex": "\\<|\\>",
         "color": "gray",
         "flag": "g"
     },
@@ -27,6 +27,26 @@
     {
         "regex": "\t+",
         "backgroundColor": "rgba(0, 0, 100, 0.1)",
+        "flag": "g"
+    },
+    {
+        "regex": "\\(|\\)",
+        "color": "#a463d6",
+        "flag": "g"
+    },
+    {
+        "regex": ";",
+        "color": "white",
+        "flag": "g"
+    },
+    {
+        "regex": "(?<=<)[a-zA-Z0-9\/]+(?=\\s|>)",
+        "color": "#569ccb",
+        "flag": "g"
+    },
+    {
+        "regex": "(?<=>)[^<]*(?=<)",
+        "color": "#cccccc",
         "flag": "g"
     }
 ]
