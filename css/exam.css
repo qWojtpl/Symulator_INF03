@@ -10,7 +10,24 @@ main {
 }
 
 nav {
+    background-color: #1f1f1f;
     height: 5vh;
+    display: flex;
+    align-items: center;
+    padding-left: 1vw;
+    padding-right: 1vw;
+    font-size: 150%;
+    color: white;
+}
+
+nav #logo {
+    text-shadow: #FC0 1px 0 10px;
+    cursor: pointer;
+}
+
+nav #time {
+    text-shadow: rgb(0, 255, 0) 1px 0 10px;
+    margin-left: auto;
 }
 
 #output-container {
@@ -130,6 +147,7 @@ iframe.output-frame {
 
 ::-webkit-scrollbar-track {
     border: 1px solid #101214;
+    cursor: default;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -138,6 +156,7 @@ iframe.output-frame {
 
 ::-webkit-scrollbar-thumb:hover {
     background-color: #4f4f4f;
+    cursor: default;
 }
 
 ::-webkit-scrollbar-corner {
