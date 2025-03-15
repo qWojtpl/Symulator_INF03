@@ -11,17 +11,21 @@ let saveInterval = setInterval(() => {
 }, 1000 * 10);
 
 function init() {
-
-    window.addEventListener("beforeunload", (e) => {
-        e.preventDefault();
-        e.returnValue = true;
-    });
-
+    
     loadSyntax();
 
     const editor = document.getElementById("code-editor");
     
+    registerEvents(editor);
     updateEditorSummary(editor, true);
+}
+
+function registerEvents(editor) {
+    // Make user confirm page reload/exit
+    window.addEventListener("beforeunload", (e) => {
+        e.preventDefault();
+        e.returnValue = true;
+    });
 
     editor.addEventListener("keydown", (e) => {
         if(e.key == "Tab") {
@@ -112,7 +116,6 @@ function init() {
             readyToSave = false;
             saveCurrentFile();
         }
-        updateHintMenu(editor, getCurrentLine(editor), getCurrentColumn());
         updateEditorColors(editor);
         updateEditorSummary(editor, false);
     });
@@ -125,6 +128,7 @@ function init() {
             targetColumn = column;
         }
     });
+
 }
 
 function loadSyntax() {

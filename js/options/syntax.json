@@ -48,5 +48,35 @@
         "regex": "(?<=>)[^<]*(?=<)",
         "color": "#cccccc",
         "flag": "g"
+    },
+    {
+        "regex": "let",
+        "color": "#569ccb",
+        "flag": "g"
+    },
+    {
+        "regex": "const",
+        "color": "#569ccb",
+        "flag": "g"
+    },
+    {
+        "regex": "var",
+        "color": "#569ccb",
+        "flag": "g"
+    },
+    {
+        "regex": "function",
+        "color": "#569ccb",
+        "flag": "g"
+    },
+    {
+        "regex": "{",
+        "color": "#a463d6",
+        "flag": "g"
+    },
+    {
+        "regex": "}",
+        "color": "#a463d6",
+        "flag": "g"
     }
 ]
