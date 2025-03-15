@@ -17,7 +17,7 @@ function updateRunButton() {
     }
 }
 
-function runButtonClick() {
+function runButtonClick(getValues, postValues) {
     if(button.disabled) {
         return;
     }
@@ -30,16 +30,26 @@ function runButtonClick() {
     if(name.endsWith("html")) {
         setOutput(contentDocument, editorCode);
     } else if(name.endsWith("php")) { 
-        simulatePHP(contentDocument, editorCode);
+        simulatePHP(contentDocument, editorCode, getValues, postValues);
     }
 }
 
-function simulatePHP(contentDocument, code) {
+function simulatePHP(contentDocument, code, getValues, postValues) {
     
     var data = new FormData();
     data.append("vm-sandbox-code", code);
-    data.append("get-test", "1234 :)");
-    data.append("post-test", "1234 :)");
+
+    if(getValues != null) {
+        for(let i = 0; i < getValues.length; i++) {
+            data.append("get-" + getValues[i].key, getValues[i].value);
+        }
+    }
+
+    if(postValues != null) {
+        for(let i = 0; i < postValues.length; i++) {
+            data.append("post-" + postValues[i].key, postValues[i].value);
+        }
+    }
 
     var xhr = new XMLHttpRequest();
 
@@ -55,7 +65,22 @@ function simulatePHP(contentDocument, code) {
 function setOutput(contentDocument, outputCode) {
     contentDocument.open();
     let parser = new DOMParser();
+    // Preparing document
     let newDocument = parser.parseFromString(outputCode, "text/html");
+    initializeScripts(parser, newDocument);
+    initializeStylesheets(parser, newDocument);
+    initializeImages(newDocument);
+    // Content document - live document
+    contentDocument.write(newDocument.documentElement.innerHTML);
+    if(outputCode.startsWith("<!DOCTYPE html>")) {
+        contentDocument.querySelector("html").setAttribute("doctype", "html5");
+    }
+    initializeLinks(contentDocument);
+    initializeForms(contentDocument);
+    contentDocument.close();
+}
+
+function initializeScripts(parser, newDocument) {
     let scripts = newDocument.querySelectorAll("script[src]");
     for(let i = 0; i < scripts.length; i++) {
         let script = scripts[i];
@@ -63,6 +88,9 @@ function setOutput(contentDocument, outputCode) {
         script.removeAttribute("src");
         script.innerHTML = parser.parseFromString(getFile(EXAM_NAME + source), "text/html").documentElement.textContent;
     }
+}
+
+function initializeStylesheets(parser, newDocument) {
     let styles = newDocument.querySelectorAll("link[rel=stylesheet]");
     for(let i = 0; i < styles.length; i++) {
         let style = styles[i];
@@ -73,6 +101,9 @@ function setOutput(contentDocument, outputCode) {
         styleElement.innerHTML = parser.parseFromString(getFile(EXAM_NAME + source), "text/html").documentElement.textContent;
         style.parentElement.insertBefore(styleElement, style.nextSibling);
     }
+}
+
+function initializeImages(newDocument) {
     let images = newDocument.querySelectorAll("img");
     for(let i = 0; i < images.length; i++) {
         let image = images[i];
@@ -82,10 +113,9 @@ function setOutput(contentDocument, outputCode) {
         }
         image.setAttribute("src", "../assets/" + EXAM_NAME + "/" + source);
     }
-    contentDocument.write(newDocument.documentElement.innerHTML);
-    if(outputCode.startsWith("<!DOCTYPE html>")) {
-        contentDocument.querySelector("html").setAttribute("doctype", "html5");
-    }
+}
+
+function initializeLinks(contentDocument) {
     let links = contentDocument.querySelectorAll("a[href]");
     for(let i = 0; i < links.length; i++) {
         let link = links[i];
@@ -94,13 +124,21 @@ function setOutput(contentDocument, outputCode) {
             linkClick(link.getAttribute("href"));
         });
     }
-    contentDocument.close();
+}
+
+function initializeForms(contentDocument) {
+    let forms = contentDocument.querySelectorAll("form");
+    for(let i = 0; i < forms.length; i++) {
+        let form = forms[i];
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            formSubmit(form);
+        });
+    }
 }
 
 function linkClick(href) {
-
     const editorFiles = document.getElementById("editor-files");
-
     for(let i = 0; i < editorFiles.children.length; i++) {
         let file = editorFiles.children[i];
         if(file.getAttribute("filename") == href) {
@@ -109,9 +147,41 @@ function linkClick(href) {
             return;
         }
     }
-
     window.open(href, "_blank");
+}
 
+function formSubmit(form) {
+    let formData = new FormData(form);
+    let action = form.getAttribute("action");
+
+    getValues = [];
+    postValues = [];
+
+    if(form.getAttribute("method") == "post") {
+        for (const [key, value] of formData) {
+            postValues[postValues.length] = {
+                key: key,
+                value: value
+            };
+        }
+    } else {
+        for (const [key, value] of formData) {
+            getValues[getValues.length] = {
+                key: key,
+                value: value
+            };
+        }
+    }
+
+    const editorFiles = document.getElementById("editor-files");
+    for(let i = 0; i < editorFiles.children.length; i++) {
+        let file = editorFiles.children[i];
+        if(file.getAttribute("filename") == action || (action == null && file.classList.contains("active"))) {
+            fileClick(file);
+            runButtonClick(getValues, postValues);
+            return;
+        }
+    }
 }
 
 function swapFrames() {
