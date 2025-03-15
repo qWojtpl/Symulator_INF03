@@ -139,11 +139,28 @@ function initializeForms(contentDocument) {
 
 function linkClick(href) {
     const editorFiles = document.getElementById("editor-files");
+
+    getValues = [];
+
+    let split = href.split("?");
+
+    if(split.length > 1) {
+        let keyValues = split[1].split("&");
+        for(let i = 0; i < keyValues.length; i++) {
+            let keyValueSplit = keyValues[i].split("=");
+            getValues[getValues.length] = {
+                key: keyValueSplit[0],
+                value: keyValueSplit[1]
+            };
+        }
+        href = split[0];
+    }
+
     for(let i = 0; i < editorFiles.children.length; i++) {
         let file = editorFiles.children[i];
         if(file.getAttribute("filename") == href) {
             fileClick(file);
-            runButtonClick();
+            runButtonClick(getValues);
             return;
         }
     }
