@@ -2,10 +2,24 @@
 document.addEventListener("DOMContentLoaded", init);
 
 let button;
+let buttonHint = false;
 
 function init() {
     button = document.getElementById("run-button");
     button.addEventListener("click", runButtonClick);
+    button.addEventListener("mouseover", () => {
+        if(!buttonHint && button.disabled) {
+            let rect = button.getBoundingClientRect();
+            createContextMenu(rect.right, rect.top, ["Nie można uruchomić pliku tego typu"], [() => {}]);
+            buttonHint = true;
+        }
+    });
+    button.addEventListener("mouseleave", () => {
+        if(buttonHint) { 
+            removeContextMenu();
+            buttonHint = false;
+        }
+    });
 }
 
 function updateRunButton() {
