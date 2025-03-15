@@ -24,7 +24,7 @@ function init() {
         if(getFileHeader(key) == "hidden") {
             continue;
         }
-        createFileElement(key.replace(EXAM_NAME, ""), i == 0);
+        createFileElement(key.replace(EXAM_NAME, ""), c == 0);
         c++;
     }
     if(c == 0) {

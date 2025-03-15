@@ -72,6 +72,10 @@ function handleExamSheet() {
     examFrame.style.display = "block";
 }
 
+function handleDatabase() {
+    hideAllFrames();
+}
+
 function handlePhotos() {
     hideAllFrames();
     let photoEditor = document.getElementById("photo-editor");
