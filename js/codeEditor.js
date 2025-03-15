@@ -83,6 +83,7 @@ function registerEvents(editor) {
         } else {
             targetColumn = column;
         }
+        updateEditorSummary(editor, false);
     });
 
     editor.addEventListener("paste", (e) => {
@@ -117,16 +118,12 @@ function registerEvents(editor) {
             saveCurrentFile();
         }
         updateEditorColors(editor);
-        updateEditorSummary(editor, false);
     });
 
     editor.addEventListener("mouseup", () => {
         updateEditorSummary(editor, firstMouse);
         firstMouse = false;
-        let column = getCurrentColumn();
-        if(column > targetColumn) {
-            targetColumn = column;
-        }
+        targetColumn = getCurrentColumn();
     });
 
 }
