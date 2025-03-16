@@ -4,6 +4,10 @@
     ],
     "environment": {
         "menus": [0,1,1,1,1,1,1,1,1],
-        "lang": "pl"
+        "lang": "pl",
+        "customIO": {
+            "save": "return false;",
+            "saveAsPSD": "return false;"
+        }
     }
 }

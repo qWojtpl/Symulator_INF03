@@ -36,7 +36,15 @@
         <div id="output-container">
             <iframe id="output" class="output-frame" src="../assets/emptyCode.html"></iframe>
             <iframe id="exam-sheet" class="output-frame"></iframe>
-            <iframe id="photo-editor" class="output-frame"></iframe>
+            <div id="photo-list" class="output-frame"></div>
+            <div id="photo-editor" class="output-frame">
+                <div id="photo-editor-panel">
+                    <button class="button">Zamknij bez zapisywania</button>
+                    <input type="text" id="photo-editor-filename" placeholder="Wpisz nazwę pliku...">
+                    <button class="button button-card button-run">Zapisz i zamknij</button>
+                </div>
+                <iframe id="photo-editor-frame"></iframe>
+            </div>
             <div id="output-summary">
                 <button class="button-card active" id="card-code-result"><span>Wynik kodu</span></button>
                 <button class="button-card" id="card-exam-sheet"><span>Arkusz</span></button>

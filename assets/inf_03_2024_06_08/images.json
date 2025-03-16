@@ -1,0 +1,10 @@
+[
+    {
+        "name": "obraz.jpg",
+        "expected": "obraz.png"
+    },
+    {
+        "name": "obraz.jpg",
+        "expected": "obraz.png"
+    }
+]

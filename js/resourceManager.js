@@ -18,3 +18,12 @@ function removeFile(name) {
     window.localStorage.removeItem(name);
     window.localStorage.removeItem(HEADER + name);
 }
+
+function imgToBase64(imgElement) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = imgElement.width;
+    canvas.height = imgElement.height;
+    ctx.drawImage(imgElement, 0, 0);
+    return canvas.toDataURL('image/png');
+}

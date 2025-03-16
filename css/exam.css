@@ -57,8 +57,37 @@ iframe.output-frame {
     justify-content: left;
 }
 
-#exam-sheet, #photo-editor {
+#exam-sheet, #photo-editor, #photo-list {
     display: none;
+}
+
+#photo-editor-panel {
+    width: 100%;
+    height: 5%;
+}
+
+#photo-editor-frame {
+    width: 100%;
+    height: 95%;
+    border: none;
+}
+
+#photo-list {
+    gap: 10%;
+    margin: 3%;
+}
+
+#photo-list .photo {
+    width: 20%;
+    height: 400px;
+} 
+
+#photo-list .photo-background {
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 100%;
 }
 
 #editor-container {

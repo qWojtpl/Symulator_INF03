@@ -53,9 +53,10 @@ function getCardIndex(element) {
 }
 
 function hideAllFrames() {
-    document.getElementById("output").style.display = "none";
-    document.getElementById("exam-sheet").style.display = "none";
-    document.getElementById("photo-editor").style.display = "none";
+    let framesToHide = document.getElementsByClassName("output-frame");
+    for(let i = 0; i < framesToHide.length; i++) {
+        framesToHide[i].style.display = "none";
+    }
 }
 
 function handleCodeResult() {
@@ -78,7 +79,5 @@ function handleDatabase() {
 
 function handlePhotos() {
     hideAllFrames();
-    let photoEditor = document.getElementById("photo-editor");
-    photoEditor.style.display = "block";
-    createPhotoEditor(photoEditor);
+    createPhotoList();
 }
