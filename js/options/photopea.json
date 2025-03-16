@@ -5,6 +5,7 @@
     "environment": {
         "menus": [0,1,1,1,1,1,1,1,1],
         "lang": "pl",
+        "intro": false,
         "customIO": {
             "save": "return false;",
             "saveAsPSD": "return false;"

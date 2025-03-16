@@ -21,7 +21,7 @@ function init() {
         if(!key.startsWith(EXAM_NAME)) {
             continue;
         }
-        if(getFileHeader(key) == "hidden") {
+        if(getFileHeader(key) == "image") {
             continue;
         }
         createFileElement(key.replace(EXAM_NAME, ""), c == 0);

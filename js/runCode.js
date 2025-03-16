@@ -10,7 +10,7 @@ function init() {
     button.addEventListener("mouseover", () => {
         if(!buttonHint && button.disabled) {
             let rect = button.getBoundingClientRect();
-            createContextMenu(rect.right, rect.top, ["Nie można uruchomić pliku tego typu"], [() => {}]);
+            createContextMenu(rect.right, rect.top, ["Nie można uruchomić pliku tego typu!"], [() => {}]);
             buttonHint = true;
         }
     });
