@@ -69,6 +69,11 @@ iframe.output-frame {
     align-items: center;
 }
 
+#photo-editor-panel input {
+    margin-left: 1vw;
+    margin-right: 0.5vw;
+}
+
 #photo-editor-panel button {
     margin-left: 0;
 }
@@ -91,12 +96,15 @@ iframe.output-frame {
 }
 
 #photo-list {
-    gap: 10%;
-    margin: 3%;
+    gap: 2%;
+    flex-wrap: wrap;
+    overflow: auto;
+    padding-left: 3%;
+    padding-right: 3%;
 }
 
 #photo-list .photo {
-    width: 20%;
+    width: 22%;
     height: 400px;
 } 
 
@@ -174,6 +182,14 @@ iframe.output-frame {
 .button-run:hover {
     background-color: #059862;
     cursor: pointer;
+}
+
+.button.button-red {
+    background-color: #aa2e04;
+}
+
+.button.button-red:hover {
+    background-color: #892301;
 }
 
 .button-run[disabled] {

@@ -19,6 +19,24 @@ function removeFile(name) {
     window.localStorage.removeItem(HEADER + name);
 }
 
+function isFileExists(name) {
+    for(let i = 0; i < window.localStorage.length; i++) {
+        if(window.localStorage.key(i) == name) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function getAllFiles() {
+    files = [];
+    for(let i = 0; i < window.localStorage.length; i++) {
+        files[files.length] = window.localStorage.key(i);
+    }
+    files.sort();
+    return files;
+}
+
 function imgToBase64(imgElement) {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');

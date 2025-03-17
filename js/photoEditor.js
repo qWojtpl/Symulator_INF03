@@ -4,10 +4,20 @@ document.addEventListener("DOMContentLoaded", init);
 let photopeaOptions;
 let imageList;
 let imageOpened = false;
+let currentOpenedPhoto;
 
 function init() {
     loadPhotopeaOptions();
     loadImageList();
+    document.getElementById("photo-editor-save").addEventListener("click", () => {
+        saveImage();
+    });
+    document.getElementById("photo-editor-close").addEventListener("click", () => {
+        closeImage();
+    });
+    document.getElementById("photo-editor-delete").addEventListener("click", () => {
+        deleteImage();
+    });
 }
 
 function createPhotoList() {
@@ -21,15 +31,15 @@ function createPhotoList() {
     for(let i = 0; i < imageList.length; i++) {
         createPhotoElement(photoList, imageList[i].name, "../assets/" + EXAM_NAME + "/" + imageList[i].name, false);
     }
-    for(let i = 0; i < window.localStorage.length; i++) {
-        let key = window.localStorage.key(i);
-        if(!key.startsWith(EXAM_NAME)) {
+    let files = getAllFiles();
+    for(let i = 0; i < files.length; i++) {
+        if(!files[i].startsWith(EXAM_NAME)) {
             continue;
         }
-        if(getFileHeader(key) != "image") {
+        if(getFileHeader(files[i]) != "image") {
             continue;
         }
-        createPhotoElement(photoList, key.replace(EXAM_NAME, ""), getFile(key), true);
+        createPhotoElement(photoList, files[i].replace(EXAM_NAME, ""), getFile(files[i]), true);
     }
 }
 
@@ -43,7 +53,7 @@ function createPhotoElement(parent, imageName, imageURL, modified) {
     photoImg.style.display = "none";
     photo.appendChild(photoImg);
     photo.addEventListener("click", () => {
-        openImage(photoImg);
+        openImage(photo, !modified);
     });
     let photoBackground = document.createElement("div");
     photoBackground.style.backgroundImage = "url('" + imageURL + "')";
@@ -55,20 +65,71 @@ function createPhotoElement(parent, imageName, imageURL, modified) {
     parent.appendChild(photo);
 }
 
-function openImage(element) {
+function openImage(element, isOriginal) {
+    let photoName = element.getAttribute("name");
+    let base64 = imgToBase64(element.children[0]);
+    if(isOriginal) {
+        if(!confirm("Czy na pewno chcesz stworzyć kopię oryginalnego pliku i go otworzyć?")) {
+            return;
+        }
+        if(isFileExists(EXAM_NAME + photoName)) {
+            let split = photoName.split(".");
+            let extension = split[split.length - 1];
+            if(split.length > 1) {
+                split.pop();
+            }
+            let oldName = split.join(".");
+            let newName = oldName;
+            let i = 0;
+            do {
+                newName = oldName + " (" + ++i + ")." + extension;
+            } while(isFileExists(EXAM_NAME + newName));
+            photoName = newName;
+        }
+        saveFile(EXAM_NAME + photoName, base64, "image");
+    }
     hideAllFrames();
     imageOpened = true;
-    document.getElementById("photo-editor-filename").value = element.getAttribute("name");
-    photopeaOptions.files = [imgToBase64(element)];
+    document.getElementById("photo-editor-filename").value = photoName;
+    currentOpenedPhoto = photoName;
+    photopeaOptions.files = [base64];
     createPhotoEditor();
+}
+
+function closeImage() {
+    if(!confirm("Czy na pewno chcesz zamknąć obraz bez zapisywania go?")) {
+        return;
+    }
+    closeEditor();
+}
+
+function deleteImage() {
+    if(currentOpenedPhoto == null) {
+        return;
+    }
+    if(!confirm("Czy na pewno chcesz usunąć plik " + currentOpenedPhoto + "?")) {
+        return;
+    }
+    removeFile(EXAM_NAME + currentOpenedPhoto);
+    closeEditor();
+}
+
+function closeEditor() {
+    imageOpened = false;
+    currentOpenedPhoto = null;
+    hideAllFrames();
+    createPhotoList();
 }
 
 function createPhotoEditor() {
     let photoEditor = document.getElementById("photo-editor");
     photoEditor.style.display = "block";
-    let photoEditorFrame = document.getElementById("photo-editor-frame");
-    photoEditorFrame.src = "https://www.photopea.com#" + encodeURIComponent(JSON.stringify(photopeaOptions));
-    
+    // swapping frames to reload photo editor
+    document.getElementById("photo-editor-frame").remove();
+    let newFrame = document.createElement("iframe");
+    newFrame.setAttribute("id", "photo-editor-frame");
+    newFrame.src = "https://www.photopea.com#" + encodeURIComponent(JSON.stringify(photopeaOptions));
+    document.getElementById("photo-editor").appendChild(newFrame);
 }
 
 function exportImg() {

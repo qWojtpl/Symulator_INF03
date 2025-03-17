@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Egzamin zawodowy - INF.03</title>
-    <script src="../js/codeEditor.js"></script>
     <script src="../js/resourceManager.js"></script>
+    <script src="../js/codeEditor.js"></script>
     <script src="../js/runCode.js"></script>
     <script src="../js/cardsManager.js"></script>
     <script src="../js/fileManager.js"></script>
@@ -41,7 +41,9 @@
             <div id="photo-editor" class="output-frame">
                 <div id="photo-editor-panel">
                     <input type="text" id="photo-editor-filename" placeholder="Wpisz nazwę pliku...">
-                    <button class="button button-run">Zapisz i zamknij</button>
+                    <button class="button button-run" id="photo-editor-save">Zapisz</button>
+                    <button class="button button-run" id="photo-editor-close">Zamknij</button>
+                    <button class="button button-run button-red" id="photo-editor-delete">Usuń</button>
                     <span id="photopea-ad">Edytor grafiki dostarcza </span>
                     <a href="https://www.photopea.com/"> 
                         <img src="../assets/photopea.svg" alt="Photopea" id="photopea-logo">

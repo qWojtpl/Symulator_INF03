@@ -16,15 +16,15 @@ function init() {
         newFileContextMenu(e);
     });
     let c = 0;
-    for(let i = 0; i < window.localStorage.length; i++) {
-        let key = window.localStorage.key(i);
-        if(!key.startsWith(EXAM_NAME)) {
+    let files = getAllFiles();
+    for(let i = 0; i < files.length; i++) {
+        if(!files[i].startsWith(EXAM_NAME)) {
             continue;
         }
-        if(getFileHeader(key) == "image") {
+        if(getFileHeader(files[i]) == "image") {
             continue;
         }
-        createFileElement(key.replace(EXAM_NAME, ""), c == 0);
+        createFileElement(files[i].replace(EXAM_NAME, ""), c == 0);
         c++;
     }
     if(c == 0) {
@@ -100,13 +100,14 @@ function changeFileName(element) {
         alert("Nazwa pliku jest za długa!");
         return;
     }
-    if(!checkFileName(newName)) {
+    if(isFileExists(EXAM_NAME + newName)) {
         alert("Plik z taką nazwą już istnieje!");
         return;
     }
     let content = getFile(EXAM_NAME + oldName);
+    let header = getFileHeader(EXAM_NAME + oldName);
     removeFile(EXAM_NAME + oldName);
-    saveFile(EXAM_NAME + newName, content);
+    saveFile(EXAM_NAME + newName, content, header);
     element.setAttribute("filename", newName);
     let split = newName.split(".");
     element.children[0].src = "../assets/" + split[split.length - 1] + ".png";
@@ -123,7 +124,7 @@ function createNewFile() {
         alert("Nazwa pliku jest za długa!");
         return;
     }
-    if(!checkFileName(name)) {
+    if(isFileExists(EXAM_NAME + name)) {
         alert("Plik z taką nazwą już istnieje!");
         return;
     }
@@ -146,16 +147,6 @@ function deleteExistingFile(element) {
     removeFile(EXAM_NAME + name);
     element.remove();
     fileClick(editorFiles.children[0]);
-}
-
-function checkFileName(name) {
-    files = document.querySelectorAll(".editor-file[filename]");
-    for(let i = 0; i < files.length; i++) {
-        if(files[i].getAttribute("filename") == name) {
-            return false;
-        }
-    }
-    return true;
 }
 
 function getCurrentFileName() {
