@@ -62,7 +62,10 @@ function createPhotoElement(parent, imageName, imageURL, modified) {
     photoBackground.classList.add("photo-background");
     photo.appendChild(photoBackground);
     let photoName = document.createElement("span");
-    photoName.innerHTML = imageName + "<br>" + (modified ? "(zmodyfikowany)" : "(oryginał)");
+    photoName.innerHTML = imageName + "<br>" + (modified ? "(wyeksportowany)" : "(oryginał)");
+    if(!modified) {
+        photo.setAttribute("original", true);
+    }
     photoImg.addEventListener("load", () => {
         photoName.innerHTML += "<br>(" + photoImg.naturalWidth + "x" + photoImg.naturalHeight + " px)";
     });
