@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", init);
 let photopeaOptions;
 let imageList;
 let imageOpened = false;
+let reloadEditor = true;
 let currentOpenedPhoto;
 
 function init() {
@@ -61,7 +62,10 @@ function createPhotoElement(parent, imageName, imageURL, modified) {
     photoBackground.classList.add("photo-background");
     photo.appendChild(photoBackground);
     let photoName = document.createElement("span");
-    photoName.innerText = imageName + (modified ? " (zmodyfikowany)" : " (oryginał)");
+    photoName.innerHTML = imageName + "<br>" + (modified ? "(zmodyfikowany)" : "(oryginał)");
+    photoImg.addEventListener("load", () => {
+        photoName.innerHTML += "<br>(" + photoImg.naturalWidth + "x" + photoImg.naturalHeight + " px)";
+    });
     photo.appendChild(photoName);
     parent.appendChild(photo);
 }
@@ -99,6 +103,9 @@ function openImage(element, isOriginal) {
 
 function saveImage() {
     if(currentOpenedPhoto == null) {
+        return;
+    }
+    if(!confirm("Uwaga! Po wyeksportowaniu pliku będzie możliwość pracowania tylko na jego wyeksportowanej wersji, więc nie będzie możliwości np. zarządzania warstwami. Czy na pewno plik jest gotowy i chcesz go już wyeksportować?")) {
         return;
     }
     let newName = document.getElementById("photo-editor-filename").value;
@@ -157,7 +164,7 @@ function onFileReceived(e) {
 }
 
 function closeImage() {
-    if(!confirm("Czy na pewno chcesz zamknąć obraz bez zapisywania go?")) {
+    if(!confirm("Czy na pewno chcesz zamknąć obraz bez wyeksportowania go?")) {
         return;
     }
     closeEditor();
@@ -177,6 +184,7 @@ function deleteImage() {
 function closeEditor() {
     imageOpened = false;
     currentOpenedPhoto = null;
+    reloadEditor = true;
     hideAllFrames();
     createPhotoList();
 }
@@ -184,12 +192,17 @@ function closeEditor() {
 function createPhotoEditor() {
     let photoEditor = document.getElementById("photo-editor");
     photoEditor.style.display = "block";
-    // swapping frames to reload photo editor
-    document.getElementById("photo-editor-frame").remove();
-    let newFrame = document.createElement("iframe");
-    newFrame.setAttribute("id", "photo-editor-frame");
-    newFrame.src = "https://www.photopea.com#" + encodeURIComponent(JSON.stringify(photopeaOptions));
-    document.getElementById("photo-editor").appendChild(newFrame);
+    let source = "https://www.photopea.com#" + encodeURIComponent(JSON.stringify(photopeaOptions));
+    if(reloadEditor) {
+        document.getElementById("photo-editor-frame").remove();
+        let newFrame = document.createElement("iframe");
+        newFrame.setAttribute("id", "photo-editor-frame");
+        newFrame.src = source;
+        document.getElementById("photo-editor").appendChild(newFrame);
+        reloadEditor = false;
+    } else {
+        photoEditor.src = source;
+    }
 }
 
 function loadPhotopeaOptions() {
