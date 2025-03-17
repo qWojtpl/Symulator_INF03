@@ -125,7 +125,12 @@ function initializeImages(newDocument) {
         if(source.startsWith("http://") || source.startsWith("https://")) {
             continue;
         }
-        image.setAttribute("src", "../assets/" + EXAM_NAME + "/" + source);
+        image.setAttribute("req-src", source);
+        if(isFileExists(EXAM_NAME + source)) {
+            image.setAttribute("src", getFile(EXAM_NAME + source));
+        } else {
+            image.setAttribute("src", "../assets/" + EXAM_NAME + "/" + source);
+        }
     }
 }
 

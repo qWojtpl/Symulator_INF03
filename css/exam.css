@@ -106,6 +106,7 @@ iframe.output-frame {
 #photo-list .photo {
     width: 22%;
     height: 400px;
+    text-align: center;
 } 
 
 #photo-list .photo-background {

@@ -18,6 +18,7 @@ function init() {
     document.getElementById("photo-editor-delete").addEventListener("click", () => {
         deleteImage();
     });
+    window.addEventListener("message", onFileReceived);
 }
 
 function createPhotoList() {
@@ -96,6 +97,65 @@ function openImage(element, isOriginal) {
     createPhotoEditor();
 }
 
+function saveImage() {
+    if(currentOpenedPhoto == null) {
+        return;
+    }
+    let newName = document.getElementById("photo-editor-filename").value;
+    if(newName != currentOpenedPhoto) {
+        if(isFileExists(newName)) {
+            alert("Plik z taką nazwą już istnieje!");
+            return;
+        }
+        removeFile(EXAM_NAME + currentOpenedPhoto);
+    }
+
+    let split = newName.split(".");
+
+    if(split.length <= 1) {
+        alert("Plik obrazu musi posiadać rozszerzenie!");
+        return;
+    }
+
+    let extension = split[split.length - 1];
+
+    currentOpenedPhoto = newName;
+
+    let photopea = document.getElementById("photo-editor-frame").contentWindow;
+    console.log("Sending file request...");
+    photopea.postMessage("app.activeDocument.saveToOE('" + extension + "')", "*");
+    
+}
+
+function onFileReceived(e) {
+    if(e.data.length < 20) {
+        return;
+    }
+
+    console.log("File received.");
+
+    const uint8Array = new Uint8Array(e.data);
+
+    let binaryString = '';
+    for (let i = 0; i < uint8Array.length; i++) {
+        binaryString += String.fromCharCode(uint8Array[i]);
+    }
+    
+    let split = currentOpenedPhoto.split(".");
+    if(split.length <= 1) {
+        alert("Plik obrazu musi posiadać rozszerzenie!");
+        return;
+    }
+    let extension = split[split.length - 1];
+    if(extension == "jpg") {
+        extension = "jpeg";
+    }
+
+    let base64 = "data:image/" + extension + ";base64," + btoa(binaryString);
+    saveFile(EXAM_NAME + currentOpenedPhoto, base64, "image");
+    closeEditor();
+}
+
 function closeImage() {
     if(!confirm("Czy na pewno chcesz zamknąć obraz bez zapisywania go?")) {
         return;
@@ -130,28 +190,6 @@ function createPhotoEditor() {
     newFrame.setAttribute("id", "photo-editor-frame");
     newFrame.src = "https://www.photopea.com#" + encodeURIComponent(JSON.stringify(photopeaOptions));
     document.getElementById("photo-editor").appendChild(newFrame);
-}
-
-function exportImg() {
-    let w = document.getElementById("photo-editor").contentWindow;
-    w.postMessage("app.activeDocument.saveToOE('png')", "*");
-    window.addEventListener("message", onMessage);
-}
-
-function onMessage(e) {
-    if(e.data.length < 20) {
-        return;
-    }
-    // Step 1: Create a Uint8Array from the ArrayBuffer
-    const uint8Array = new Uint8Array(e.data);
-
-    // Step 2: Convert Uint8Array to binary string
-    let binaryString = '';
-    for (let i = 0; i < uint8Array.length; i++) {
-        binaryString += String.fromCharCode(uint8Array[i]);
-    }
-
-    document.getElementById("code-editor").innerHTML = "<img src='data:image/png;base64," + btoa(binaryString) + "'>";
 }
 
 function loadPhotopeaOptions() {
