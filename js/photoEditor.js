@@ -113,7 +113,7 @@ function saveImage() {
     }
     let newName = document.getElementById("photo-editor-filename").value;
     if(newName != currentOpenedPhoto) {
-        if(isFileExists(newName)) {
+        if(isFileExists(EXAM_NAME + newName)) {
             alert("Plik z taką nazwą już istnieje!");
             return;
         }
@@ -134,7 +134,6 @@ function saveImage() {
     let photopea = document.getElementById("photo-editor-frame").contentWindow;
     console.log("Sending file request...");
     photopea.postMessage("app.activeDocument.saveToOE('" + extension + "')", "*");
-    
 }
 
 function onFileReceived(e) {

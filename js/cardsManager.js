@@ -11,6 +11,7 @@ function init() {
     cards[1] = document.getElementById("card-exam-sheet");
     cards[2] = document.getElementById("card-database");
     cards[3] = document.getElementById("card-photos");
+    cards[4] = document.getElementById("check-exam");
     for(let i = 0; i < cards.length; i++) {
         cards[i].addEventListener("click", (e) => {
             if(!e.target.classList.contains("button-card")) {
@@ -31,7 +32,9 @@ function cardClick(element) {
     for(let i = 0; i < cards.length; i++) {
         cards[i].classList.remove("active");
     }
-    element.classList.add("active");
+    if(index != 4) { 
+        element.classList.add("active");
+    }
     if(index == 0) {
         handleCodeResult();
     } else if(index == 1) {
@@ -40,6 +43,8 @@ function cardClick(element) {
         handleDatabase();
     } else if(index == 3) {
         handlePhotos();
+    } else if(index == 4) {
+        handleExamCheck();
     }
 }
 
@@ -80,4 +85,10 @@ function handleDatabase() {
 function handlePhotos() {
     hideAllFrames();
     createPhotoList();
+}
+
+function handleExamCheck() {
+    hideAllFrames();
+    document.getElementById("exam-summary").style.display = "block";
+    checkExam();
 }

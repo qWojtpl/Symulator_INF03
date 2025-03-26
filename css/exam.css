@@ -40,10 +40,12 @@ nav #time {
     transform-origin: top left;
     width: 100%;
     height: 95vh;
+    border-top: 1px solid #2b2b2b;
 }
 
 iframe.output-frame {
     border: none;
+    border-top: 1px solid #2b2b2b;
 }
 
 #output-summary {
@@ -57,7 +59,7 @@ iframe.output-frame {
     justify-content: left;
 }
 
-#exam-sheet, #photo-editor, #photo-list {
+#exam-sheet, #photo-editor, #photo-list, #exam-summary {
     display: none;
 }
 
@@ -101,7 +103,6 @@ iframe.output-frame {
     overflow: auto;
     padding: 3%;
     background-color: #1f1f1f;
-    border-top: 1px solid #2b2b2b;
     height: 92%;
 }
 
@@ -144,6 +145,24 @@ iframe.output-frame {
 #editor-container {
     width: 50vw;
     height: 95vh;
+}
+
+#exam-summary {
+    background-color: #1f1f1f;
+    text-align: center;
+    color: white;
+}
+
+#exam-summary-title {
+    text-shadow: rgb(0, 255, 0) 1px 0 10px;
+}
+
+#exam-summary-subtitle {
+    text-shadow: rgb(13, 120, 208) 1px 0 10px;
+}
+
+#exam-summary-time {
+    
 }
 
 .button {
