@@ -44,6 +44,7 @@ function fileClick(element) {
     loadFileIntoEditor(element.getAttribute("filename"));
     updateRunButton();
     updateEditorSummary(editor, true);
+    setURLValue("file", element.getAttribute("filename"));
 }
 
 function createFileElement(name, active) {

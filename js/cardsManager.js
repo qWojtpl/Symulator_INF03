@@ -46,6 +46,11 @@ function cardClick(element) {
     } else if(index == 4) {
         handleExamCheck();
     }
+    setURLValue("card", index);
+}
+
+function runCardClick(index) {
+    cardClick(cards[index]);
 }
 
 function getCardIndex(element) {
