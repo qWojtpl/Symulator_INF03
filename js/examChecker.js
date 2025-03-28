@@ -9,6 +9,7 @@ function init() {
 }
 
 function checkExam() {
+    saveCurrentFile();
     clearCheckExamResult();
     for(let i = 0; i < answerKey.length; i++) {
         if(!answerKey[i].startsWith("@")) {
@@ -57,6 +58,9 @@ function checkExamFile(fileName, index) {
 }
 
 function checkLine(line, contentDocument) {
+    if(line == "\r\n" || line == "" || line == "\n") {
+        return;
+    }
     let selectors = line.split(" && ");
     let c = 0;
     for(let i = 0; i < selectors.length; i++) {
@@ -89,7 +93,19 @@ function checkLine(line, contentDocument) {
     for(let i = 0; i < selectors.length; i++) {
         let selector = selectors[i];
         let contentSplit = selector.split(" @");
+        let negation = false;
+        if(contentSplit[0].startsWith("!")) {
+            negation = true;
+            contentSplit[0] = contentSplit[0].replaceAll("!", "");
+        }
         let elements = contentDocument.querySelectorAll(contentSplit[0]);
+        if(elements.length > 0 && negation) {
+            addCheckExamError("Element which is not allowed", line);
+            continue;
+        } else if(negation) {
+            c++;
+            continue;
+        }
         if(elements.length == 0) {
             addCheckExamError("ELEMENT NOT FOUND", line);
             continue;
