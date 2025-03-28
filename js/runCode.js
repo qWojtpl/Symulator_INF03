@@ -24,7 +24,7 @@ function init() {
 
 function updateRunButton() {
     let name = getCurrentFileName();
-    if(!name.endsWith("html") && !name.endsWith("php")) {
+    if(!name.endsWith(".html") && !name.endsWith(".php")) {
         button.disabled = true;
     } else {
         button.disabled = false;
@@ -41,9 +41,9 @@ function runButtonClick(getValues, postValues) {
     let iframe = swapFrames();
     let contentDocument = iframe.contentDocument;
     let editorCode = getEditorCode(document.getElementById("code-editor"));
-    if(name.endsWith("html")) {
+    if(name.endsWith(".html")) {
         setOutput(contentDocument, editorCode);
-    } else if(name.endsWith("php")) { 
+    } else if(name.endsWith(".php")) { 
         simulatePHP(contentDocument, editorCode, getValues, postValues);
     }
 }
@@ -81,13 +81,16 @@ function setOutput(contentDocument, outputCode) {
     let parser = new DOMParser();
     // Preparing document
     let newDocument = parser.parseFromString(outputCode, "text/html");
+    let lang = newDocument.querySelector("html").getAttribute("lang");
     initializeScripts(parser, newDocument);
     initializeStylesheets(parser, newDocument);
     initializeImages(newDocument);
     // Content document - live document
     contentDocument.write(newDocument.documentElement.innerHTML);
     if(outputCode.startsWith("<!DOCTYPE html>")) {
-        contentDocument.querySelector("html").setAttribute("doctype", "html5");
+        let html = contentDocument.querySelector("html");
+        html.setAttribute("doctype", "html5");
+        html.setAttribute("lang", lang);
     }
     initializeLinks(contentDocument);
     initializeForms(contentDocument);

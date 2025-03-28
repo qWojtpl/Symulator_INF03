@@ -35,6 +35,7 @@ function cardClick(element) {
     if(index != 4) { 
         element.classList.add("active");
     }
+    setURLValue("card", index);
     if(index == 0) {
         handleCodeResult();
     } else if(index == 1) {
@@ -46,7 +47,6 @@ function cardClick(element) {
     } else if(index == 4) {
         handleExamCheck();
     }
-    setURLValue("card", index);
 }
 
 function runCardClick(index) {
