@@ -25,7 +25,7 @@ function init() {
 
 function cardClick(element) {
     let index = getCardIndex(element);
-    if(index == currentIndex) {
+    if(index == currentIndex && currentIndex != 4) {
         return;
     }
     currentIndex = index;

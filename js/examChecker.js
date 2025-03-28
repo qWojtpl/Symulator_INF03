@@ -10,8 +10,11 @@ function init() {
 
 function checkExam() {
     clearCheckExamResult();
-    for(let i = 0; i < answerKey.files.length; i++) {
-        checkExamFile(answerKey.files[i].name, i);
+    for(let i = 0; i < answerKey.length; i++) {
+        if(!answerKey[i].startsWith("@")) {
+            continue;
+        }
+        checkExamFile(answerKey[i].replace("@", ""), i);
     }
     document.getElementById("virtual-code-dumpster").innerHTML = "";
     let examSummary = document.getElementById("exam-summary");
@@ -29,43 +32,95 @@ function checkExamFile(fileName, index) {
     }
     let dumpster = document.getElementById("virtual-code-dumpster");
     let virtualOutput = document.getElementById("virtual-output");
+
+    virtualOutput.remove();
+    virtualOutput = document.createElement("iframe");
+    virtualOutput.setAttribute("id", "virtual-output");
+    dumpster.parentNode.insertBefore(virtualOutput, dumpster.nextSibling);
+
     dumpster.innerHTML = getFile(EXAM_NAME + fileName);
 
+    let contentDocument = virtualOutput.contentDocument;
+
     if(fileName.endsWith(".html")) {
-        setOutput(virtualOutput.contentDocument, dumpster.textContent);
+        setOutput(contentDocument, dumpster.textContent);
     } else if(fileName.endsWith(".php")) {
-        simulatePHP(virtualOutput.contentDocument, dumpster.textContent);
+        simulatePHP(contentDocument, dumpster.textContent);
     }
-    checkExamTag(virtualOutput.contentDocument, "html", answerKey.files[index].root, "");
+
+    for(let i = index; i < answerKey.length; i++) {
+        if(answerKey[i].startsWith("@")) {
+            continue;
+        }
+        checkLine(answerKey[i], contentDocument);
+    }
 }
 
-function checkExamTag(contentDocument, tagName, object, previousQuery) {
-    let element = contentDocument.querySelector(previousQuery + tagName); 
-    console.log(previousQuery + tagName);
-    let attributes = Object.keys(object);
-    for(let i = 0; i < attributes.length; i++) {
-        if(attributes[i] == "tagName") {
-            continue;
+function checkLine(line, contentDocument) {
+    let selectors = line.split(" && ");
+    let c = 0;
+    for(let i = 0; i < selectors.length; i++) {
+        let selector = selectors[i];
+        let contentSplit = selector.split(" @");
+        if(contentSplit[0].includes(" aside$")) {
+            let b = contentSplit[0].replaceAll(" aside$", " aside");
+            b += ", " + contentSplit[0].replaceAll(" aside$", " section");
+            contentSplit[0] = b;
         }
-        if(attributes[i] == "--elements") {
-            let children = Object.keys(object[attributes[i]]);
-            for(let j = 0; j < children.length; j++) {
-                checkExamTag(contentDocument, children[j].tagName, object[attributes[i]][children[j]], previousQuery + " " + tagName);
-            }
-            continue;
-        } else if(attributes[i] == "--content") {
-            if(element.innerText != object[attributes[i]]) {
-                addCheckExamError("CONTENT_ERROR", attributes[i] + ": is " + element.innerText + ", should be " + object[attributes[i]]);
-            }
-            continue;
+        if(contentSplit[0].includes(" main$")) {
+            let b = contentSplit[0].replaceAll(" main$", " main");
+            b += ", " + contentSplit[0].replaceAll(" main$", " main");
+            b += ", " + contentSplit[0].replaceAll(" main$", " section");
+            contentSplit[0] = b;
         }
-        if(element.getAttribute(attributes[i]) != object[attributes[i]]) {
-            addCheckExamError("ATTRIBUTE_ERROR", attributes[i] + ": is "+ element.getAttribute(attributes[i]) + ", should be " + object[attributes[i]]);
+        if(contentSplit[0].includes(" main div$")) {
+            let b = contentSplit[0].replaceAll(" main div$", " main div");
+            b += ", " + contentSplit[0].replaceAll(" main div$", " section section");
+            b += ", " + contentSplit[0].replaceAll(" main div$", " main section");
+            b += ", " + contentSplit[0].replaceAll(" main div$", " section div");
+            contentSplit[0] = b;
+        }
+        if(contentSplit.length > 1) {
+            selectors[i] = contentSplit[0] + " @" + contentSplit[1];
+        } else {
+            selectors[i] = contentSplit[0];
         }
     }
-}
+    for(let i = 0; i < selectors.length; i++) {
+        let selector = selectors[i];
+        let contentSplit = selector.split(" @");
+        let elements = contentDocument.querySelectorAll(contentSplit[0]);
+        if(elements.length == 0) {
+            addCheckExamError("ELEMENT NOT FOUND", line);
+            continue;
+        }
+        for(let j = 0; j < elements.length; j++) {
+            let element = elements[j];
+            if(contentSplit.length > 1) {
+                let content = contentSplit[1];
+                if(content.startsWith("s")) {
+                    content = content.substring(2);
+                    if(!element.innerHTML.startsWith(content)) {
+                        continue;
+                    }
+                } else {
+                    content = content.substring(1);
+                    if(element.innerHTML != content) {
+                        continue;
+                    }
+                }
+            }
+            c++;
+            break;
+        }
+    }
+    if(c != selectors.length) {
+        addCheckExamCallback("NOT_MEET", line);
+    }
+} 
 
 function addCheckExamError(name, message) {
+    console.log("Error: " + name + " " + message);
     addCheckExamCallback(name, message, "ERROR");
 }
 
@@ -87,9 +142,9 @@ function clearCheckExamResult() {
 
 function downloadExamAnswerKey() {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "../assets/" + EXAM_NAME + "/exam.json", true);
+    xhr.open("GET", "../assets/" + EXAM_NAME + "/exam.key", true);
     xhr.onload = function () {
-        answerKey = JSON.parse(this.responseText);
+        answerKey = this.responseText.split("\r\n");
     };
     xhr.send();
 }

@@ -165,6 +165,12 @@ iframe.output-frame {
     
 }
 
+#virtual-output {
+    width: 1280px;
+    height: 720px;
+    display: none;
+}
+
 .button {
     border-radius: 5px;
     color: white;
