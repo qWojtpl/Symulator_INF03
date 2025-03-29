@@ -67,7 +67,7 @@ function simulatePHP(contentDocument, code, getValues, postValues) {
 
     var xhr = new XMLHttpRequest();
 
-    xhr.open("POST", "../lib/simulate.php", true);
+    xhr.open("POST", "../lib/phpSimulation.php", true);
     xhr.onload = function () {
         setOutput(contentDocument, this.responseText);
     };

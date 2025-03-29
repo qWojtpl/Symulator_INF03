@@ -1,39 +1,30 @@
-<?php 
+<?php
 
-    function strpos_all($haystack, $needle) {
-        $offset = 0;
-        $allpos = array();
-        while (($pos = strpos($haystack, $needle, $offset)) !== FALSE) {
-            $offset   = $pos + 1;
-            $allpos[] = $pos;
-        }
-        return $allpos;
-    }
+if(!isset($_POST["vm-sandbox-code"])) {
+    return;
+}
 
-    require_once("../vendor/autoload.php");
+require_once("./functions.php");
+require_once("./overrides.php");
 
+function getSandbox($getVariables, $postVariables) {
     $sandbox = new PHPSandbox\PHPSandbox;
-    $sandbox->whitelistFunc("date", "function", "var_dump");
+    $sandbox->whitelistFunc("date", "function", "var_dump", "define");
     $sandbox->setOption("allow_functions", "true");
-    $sandbox->defineFunc('mysqli_connect', function($s) { echo "brbr ".$s; });
-
-    $getVariables = [];
-    $postVariables = [];
-
-    foreach($_POST as $key => $value)
-    {
-        if(str_starts_with($key, "get-")) {
-            $getVariables[str_replace("get-", "", $key)] = $value;
-        } else if(str_starts_with($key, "post-")) {
-            $postVariables[str_replace("post-", "", $key)] = $value;
-        }
-    }
-
+    $dummy = new o_mysqli("--dummy");
+    $sandbox->defineClass("mysqli", get_class($dummy));
+    $sandbox->defineFunc("mysqli_connect", function(...$values) { 
+        return o_mysqli_connect(...$values);
+    });
+    $sandbox->defineFunc("mysqli_close", function($a) { 
+        return o_mysqli_close($a);
+    });
     $sandbox->defineSuperGlobal("_POST", $postVariables);
     $sandbox->defineSuperGlobal("_GET", $getVariables);
+    return $sandbox;
+}
 
-    $code = $_POST["vm-sandbox-code"];
-
+function simulatePHP($sandbox, $code) {
     $code = str_replace("?>\r\n", "?>", $code);
 
     $startPositions = strpos_all($code, "<?php");
@@ -87,5 +78,23 @@
     } 
 
     $sandbox->execute($newCodeBlock." ?>");
+} 
+
+$getVariables = [];
+$postVariables = [];
+
+foreach($_POST as $key => $value)
+{
+    if(str_starts_with($key, "get-")) {
+        $getVariables[str_replace("get-", "", $key)] = $value;
+    } else if(str_starts_with($key, "post-")) {
+        $postVariables[str_replace("post-", "", $key)] = $value;
+    }
+}
+
+$sandbox = getSandbox($getVariables, $postVariables);
+simulatePHP($sandbox, $_POST["vm-sandbox-code"]);
+
+o_mysqli_neutralize();
 
 ?>
