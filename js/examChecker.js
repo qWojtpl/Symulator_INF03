@@ -4,6 +4,7 @@ init();
 let answerKey = [];
 let answerKeyMessages = [];
 let result = [];
+let skipCSS = false;
 
 function init() {
     downloadExamAnswerKey();
@@ -75,6 +76,16 @@ function checkLine(line, contentDocument, index) {
     if(line == "\r\n" || line == "" || line == "\n") {
         return;
     }
+    let decideCSS = false;
+    if(line.startsWith("|")) {
+        decideCSS = true;
+        line = line.substring(1);
+    }
+    let cssStyle = false;
+    if(line.startsWith("=")) {
+        cssStyle = true;
+        line = line.substring(1);
+    }
     let selectors = line.split(" && ");
     let c = 0;
     for(let i = 0; i < selectors.length; i++) {
@@ -92,9 +103,7 @@ function checkLine(line, contentDocument, index) {
         }
         if(contentSplit[0].includes(" main div$")) {
             let b = contentSplit[0].replaceAll(" main div$", " main div");
-            b += ", " + contentSplit[0].replaceAll(" main div$", " section section");
             b += ", " + contentSplit[0].replaceAll(" main div$", " main section");
-            b += ", " + contentSplit[0].replaceAll(" main div$", " section div");
             contentSplit[0] = b;
         }
         if(contentSplit.length > 1) {
@@ -104,6 +113,9 @@ function checkLine(line, contentDocument, index) {
         }
     }
     for(let i = 0; i < selectors.length; i++) {
+        if(skipCSS) {
+            break;
+        }
         let selector = selectors[i];
         let contentSplit = selector.split(" @");
         let negation = false;
@@ -111,14 +123,10 @@ function checkLine(line, contentDocument, index) {
             negation = true;
             contentSplit[0] = contentSplit[0].replaceAll("!", "");
         }
-        let cssStyle = false;
-        if(contentSplit[0].startsWith("=")) {
-            cssStyle = true;
-            contentSplit[0] = contentSplit[0].substring(1);
-        }
         let elements;
+        let dummy
         if(contentSplit[0].startsWith("*") && cssStyle) {
-            let dummy = document.createElement("dummy");
+            dummy = document.createElement("dummy");
             contentDocument.querySelector("body").appendChild(dummy);
             elements = [dummy];
         } else {
@@ -131,16 +139,32 @@ function checkLine(line, contentDocument, index) {
             continue;
         }
         if(elements.length == 0) {
-            continue;
+            break;
+        }
+        if(cssStyle) {
+            c = selectors.length;
         }
         for(let j = 0; j < elements.length; j++) {
             let element = elements[j];
             if(contentSplit.length > 1) {
                 let content = contentSplit[1];
                 if(cssStyle) {
-                    if(window.getComputedStyle(element)["fontFamily"] != "Cambria") {
-                        continue;
+                    let cssSplit = content.split(":");
+                    let dashedProperty = "";
+                    for(let k = 1; k < cssSplit[0].length; k++) {
+                        dashedProperty += cssSplit[0].charAt(k);
+                        if(cssSplit[0].charAt(k + 1) == '-') {
+                            dashedProperty += cssSplit[0].charAt(k + 2).toUpperCase();
+                            k += 2;
+                        }
                     }
+                    if(window.getComputedStyle(element)[dashedProperty] != cssSplit[1]) {
+                        c = 0;
+                        console.log(element);
+                        console.log(window.getComputedStyle(element)[dashedProperty] + "!=" + cssSplit[1]);
+                        break;
+                    }
+                    continue;
                 } else {
                     if(content.startsWith("s")) {
                         content = content.substring(2);
@@ -160,11 +184,17 @@ function checkLine(line, contentDocument, index) {
             c++;
             break;
         }
+        if(dummy != null) {
+            dummy.remove();
+        }
     }
     if(c != selectors.length) {
-        addCheckExamError("NOT_MEET", index);
+        addCheckExamError(cssStyle ? "CSS" : "HTML", index);
+        if(decideCSS) {
+            skipCSS = true;
+        }
     } else {
-        addCheckExamResult("RESULT_OK", index);
+        addCheckExamResult(cssStyle ? "CSS" : "HTML", index);
     }
 } 
 
@@ -186,6 +216,7 @@ function addCheckExamCallback(name, index, type) {
 
 function clearCheckExamResult() {
     result = [];
+    skipCSS = false;
     let elements = document.querySelectorAll("#exam-summary div.exam-summary-result, #exam-summary dummy");
     for(let i = 0; i < elements.length; i++) {
         elements[i].remove();

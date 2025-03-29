@@ -11,9 +11,7 @@ let saveInterval = setInterval(() => {
 }, 1000 * 10);
 
 function init() {
-    
     loadSyntax();
-
     const editor = document.getElementById("code-editor");
     
     registerEvents(editor);
@@ -25,6 +23,10 @@ function registerEvents(editor) {
     window.addEventListener("beforeunload", (e) => {
         e.preventDefault();
         e.returnValue = true;
+    });
+
+    window.addEventListener("scroll" ,() => {
+        window.scrollTo(0, 0);
     });
 
     editor.addEventListener("keydown", (e) => {
