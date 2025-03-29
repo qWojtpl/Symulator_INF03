@@ -28,6 +28,6 @@ nav span {
     font-size: 28px;
 }
 
-.exam-summary-result span:nth-of-type(1) {
+.exam-summary-result span.ok, .exam-summary-result span.error {
     font-size: 28px;
 }

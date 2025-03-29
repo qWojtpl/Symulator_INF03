@@ -2,14 +2,16 @@
 document.addEventListener("DOMContentLoaded", init);
 
 let photopeaOptions;
-let imageList;
+let imageList = [];
 let imageOpened = false;
 let reloadEditor = true;
 let currentOpenedPhoto;
 
 function init() {
     loadPhotopeaOptions();
-    loadImageList();
+    if(imageList.length == 0) {
+        loadImageList();
+    }
     document.getElementById("photo-editor-save").addEventListener("click", () => {
         saveImage();
     });

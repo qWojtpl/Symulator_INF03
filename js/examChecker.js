@@ -1,17 +1,19 @@
 
-init();
-
 let answerKey = [];
 let answerKeyMessages = [];
 let result = [];
 let skipCSS = false;
 
-function init() {
-    downloadExamAnswerKey();
-    downloadExamAnswerKeyMessages();
-}
-
 function checkExam() {
+    if(answerKey.length == 0) {
+        downloadExamAnswerKey();
+    }
+    if(answerKeyMessages.length == 0) {
+        downloadExamAnswerKeyMessages();
+    }
+    if(imageList.length == 0) {
+        loadImageList();   
+    }
     saveCurrentFile();
     clearCheckExamResult();
     for(let i = 0; i < answerKey.length; i++) {
@@ -39,11 +41,115 @@ function checkExam() {
         div.appendChild(message);
         examSummary.appendChild(div);
     }
+    for(let i = 0; i < imageList.length; i++) {
+        checkExamImage(imageList[i]);
+    }
+}
+
+function checkExamImage(image) {
+    let imageName = image.expected;
+    let wrongExtension = false;
+    let examSummary = document.getElementById("exam-summary");
+
+    if(!isFileExists(EXAM_NAME + image.expected)) {
+        if(isFileExists(EXAM_NAME + image.name)) {
+            wrongExtension = true;
+            imageName = image.name;
+        } else {
+            let div = document.createElement("div");
+            div.classList.add("exam-summary-result");
+            div.innerHTML = "<span class='error'>X</span><span>Nie znaleziono pliku: " + image.expected + "</span>";
+            examSummary.insertBefore(div, document.querySelector("#exam-summary div.exam-summary-result"));
+            return;
+        }
+    }
+
+    let expectedImageUrl = "../assets/" + EXAM_NAME + "/" + image.expected + ".resource";
+
+    let expectedImage = new Image();
+    let actualImageBase64 = getFile(EXAM_NAME + imageName);
+    let actualImage = new Image();
+    actualImage.src = actualImageBase64;
+
+    expectedImage.onload = () => {
+        resemble(expectedImageUrl)
+            .compareTo(actualImageBase64)
+            .ignoreAntialiasing()
+            .outputSettings({
+                errorColor: {
+                    red: 255,
+                    green: 0,
+                    blue: 0
+                },
+                errorType: "movement",
+                transparency: 0.3
+            })
+            .scaleToSameSize()
+            .onComplete(function(data) {
+                let div = document.createElement("div");
+                div.classList.add("exam-summary-result");
+                let compareImage = document.createElement("img");
+                compareImage.src = data.getImageDataUrl();
+                compareImage.style.width = expectedImage.width + "px";
+                compareImage.style.height = expectedImage.height + "px";
+                div.appendChild(compareImage);
+                let description = document.createElement("div");
+                let sign = document.createElement("span");
+                let label = document.createElement("span");
+                if(wrongExtension) {
+                    sign.innerText = "X";
+                    sign.classList.add("error");
+                    label.innerText = "Twój obraz posiada nieprawidłowe rozszerzenie (jest: " + imageName + ", powinno być: " + image.expected + ")";
+                } else {
+                    sign.innerText = "✓";
+                    sign.classList.add("ok");
+                    label.innerText = "Twój obraz posiada prawidłowe rozszerzenie (" + image.expected + ")";
+                }
+                description.appendChild(sign);
+                description.appendChild(label);
+                description.appendChild(document.createElement("br"));
+                label = document.createElement("span");
+                sign = document.createElement("span");
+                if(data.rawMisMatchPercentage > 20) {
+                    sign.innerText = "X";
+                    sign.classList.add("error");
+                    label.innerText = "Różnica między Twoim obrazem, a obrazem pożądanym jest za duża: " + data.misMatchPercentage + "%";
+                } else {
+                    sign.innerText = "✓";
+                    sign.classList.add("ok");
+                    label.innerText = "Twój obraz jest podobny do obrazu pożądanego: " + data.misMatchPercentage + "% różnicy";
+                }
+                description.appendChild(sign);
+                description.appendChild(label);
+                description.appendChild(document.createElement("br"));
+                label = document.createElement("span");
+                sign = document.createElement("span");
+                let widthDifference = Math.abs(expectedImage.width - actualImage.width);
+                let heightDifference = Math.abs(expectedImage.height - actualImage.height);
+                if(widthDifference > 5 || heightDifference > 5) {
+                    sign.innerText = "X";
+                    sign.classList.add("error");
+                    label.innerText = "Twój obraz ma nieprawidłowe wymiary: " + widthDifference + "px różnicy w szerokości i " + heightDifference + "px w wysokości";
+                } else {
+                    sign.innerText = "✓";
+                    sign.classList.add("ok");
+                    label.innerText = "Twój obraz ma prawidłowe wymiary: " + widthDifference + "px różnicy w szerokości i " + heightDifference + "px w wysokości";
+                }
+                description.appendChild(sign);
+                description.appendChild(label);
+                description.appendChild(document.createElement("br"));
+                div.appendChild(description);
+                examSummary.insertBefore(div, document.querySelector("#exam-summary div.exam-summary-result"));
+            });
+    };
+
+    expectedImage.src = expectedImageUrl;
+
 }
 
 function checkExamFile(fileName, index) {
     if(!isFileExists(EXAM_NAME + fileName)) {
-        addCheckExamError("FILE_NOT_FOUND", fileName, index);
+        addCheckExamError(index);
         return;
     }
     let dumpster = document.getElementById("virtual-code-dumpster");
@@ -175,7 +281,7 @@ function checkLine(line, contentDocument, index) {
                         content = content.substring(1);
                         let currentContent = element.innerHTML;
                         currentContent = currentContent.replaceAll("\t", "");
-                        if(currentContent != content) {
+                        if(currentContent.replaceAll('"', "") != content) {
                             continue;
                         }
                     }
@@ -189,32 +295,32 @@ function checkLine(line, contentDocument, index) {
         }
     }
     if(c != selectors.length) {
-        addCheckExamError(cssStyle ? "CSS" : "HTML", index);
+        addCheckExamError(index);
         if(decideCSS) {
             skipCSS = true;
         }
     } else {
-        addCheckExamResult(cssStyle ? "CSS" : "HTML", index);
+        addCheckExamResult(index);
     }
 } 
 
-function addCheckExamError(name, index) {
-    addCheckExamCallback(name, index, "ERROR");
+function addCheckExamError(index) {
+    addCheckExamCallback(index, "ERROR");
 }
 
-function addCheckExamResult(name, index) {
-    addCheckExamCallback(name, index, "RESULT");
+function addCheckExamResult(index) {
+    addCheckExamCallback(index, "RESULT");
 }
 
-function addCheckExamCallback(name, index, type) {
+function addCheckExamCallback(index, type) {
     result[result.length] = {
-        name: name,
         index: index,
         type: type
     }
 }
 
 function clearCheckExamResult() {
+    imageResults = [];
     result = [];
     skipCSS = false;
     let elements = document.querySelectorAll("#exam-summary div.exam-summary-result, #exam-summary dummy");
