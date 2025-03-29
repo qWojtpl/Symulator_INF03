@@ -27,3 +27,7 @@ nav span {
 #exam-summary-time {
     font-size: 28px;
 }
+
+.exam-summary-result span:nth-of-type(1) {
+    font-size: 28px;
+}
