@@ -24,7 +24,7 @@ nav span {
     font-size: 32px;
 }
 
-#exam-summary-time {
+#exam-summary-time, #exam-summary-time span {
     font-size: 28px;
 }
 

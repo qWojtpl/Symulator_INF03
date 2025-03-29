@@ -21,7 +21,7 @@ function init() {
         if(!files[i].startsWith(EXAM_NAME)) {
             continue;
         }
-        if(getFileHeader(files[i]) == "image") {
+        if(getFileHeader(files[i]) == "image" || getFileHeader(files[i]) == "meta") {
             continue;
         }
         createFileElement(files[i].replace(EXAM_NAME, ""), c == 0);

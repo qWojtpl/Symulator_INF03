@@ -16,6 +16,7 @@ function checkExam() {
     }
     saveCurrentFile();
     clearCheckExamResult();
+    document.querySelector("#exam-summary-time span").innerText = getTimerText(time);
     for(let i = 0; i < answerKey.length; i++) {
         if(!answerKey[i].startsWith("@")) {
             continue;
