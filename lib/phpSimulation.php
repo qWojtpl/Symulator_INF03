@@ -11,14 +11,7 @@ function getSandbox($getVariables, $postVariables) {
     $sandbox = new PHPSandbox\PHPSandbox;
     $sandbox->whitelistFunc("date", "function", "var_dump", "define");
     $sandbox->setOption("allow_functions", "true");
-    $dummy = new o_mysqli("--dummy");
-    $sandbox->defineClass("mysqli", get_class($dummy));
-    $sandbox->defineFunc("mysqli_connect", function(...$values) { 
-        return o_mysqli_connect(...$values);
-    });
-    $sandbox->defineFunc("mysqli_close", function($a) { 
-        return o_mysqli_close($a);
-    });
+    callOverrides($sandbox);
     $sandbox->defineSuperGlobal("_POST", $postVariables);
     $sandbox->defineSuperGlobal("_GET", $getVariables);
     return $sandbox;

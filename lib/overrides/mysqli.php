@@ -22,10 +22,13 @@ class o_mysqli {
     private $username;
     private $password;
     private $database;
+
+    public int $affected_rows;
+
     private $realConnection;
 
     public function __construct($hostname = null, $username = null, $password = null, $database = null) {
-        if($hostname == "--dummy") {
+        if($hostname === "--dummy") {
             return;
         }
         global $connections;
@@ -36,6 +39,7 @@ class o_mysqli {
         $this->username = $username;
         $this->password = $password;
         $this->database = $database;
+        $this->setAffectedRows(0);
         $this->realConnection = mysqli_connect("localhost", "root", "", "baza");
         array_push($connections, $this);
     }
@@ -54,6 +58,37 @@ class o_mysqli {
         mysqli_close($this->realConnection);
     }
 
+    private function setAffectedRows($value) {
+        $reflection = new ReflectionProperty(o_mysqli::class, "affected_rows");
+        $reflection->setValue($this, $value);
+    }
+
+    public function query(string $query) {
+        mysqli_autocommit($this->realConnection, false);
+        mysqli_begin_transaction($this->realConnection);
+        $realResult = mysqli_query($this->realConnection, $query);
+        $this->setAffectedRows(mysqli_affected_rows($this->realConnection));
+        mysqli_rollback($this->realConnection);
+        return new o_mysqli_result($realResult);
+    }
+
+}
+
+class o_mysqli_result {
+
+    public function __construct($result) {
+        if($result === "--dummy") {
+            return;
+        }
+    }
+
+}
+
+function o_mysqli_affected_rows($mysql) {
+    if(isset($mysql->affected_rows)) {
+        return $mysql->affected_rows;
+    }
+    return 0;
 }
 
 function o_mysqli_connect($hostname = null, $username = null, $password = null, $database = null) {
@@ -65,8 +100,14 @@ function o_mysqli_close($mysql) {
     $mysql->close();
 }
 
+function o_mysqli_query($mysql, $query) {
+    $mysql->query($query);
+}
+
+// Neutralize (close) all remaining connections
 function o_mysqli_neutralize() {
     global $connections;
+    throw new o_mysqli_exception("Zostawiłes otwartych ".count($connections)." połączeń");
     for($i = 0; $i < count($connections); $i++) {
         $connections[$i]->close();
     }
