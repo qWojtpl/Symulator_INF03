@@ -51,7 +51,7 @@ class o_mysqli {
             if($connections[$i] == $this) {
                 continue;
             } else {
-                array_push($connections, $connections[$i]);
+                array_push($newConnections, $connections[$i]);
             }
         }
         $connections = $newConnections;
@@ -66,8 +66,10 @@ class o_mysqli {
     public function query(string $query) {
         mysqli_autocommit($this->realConnection, false);
         mysqli_begin_transaction($this->realConnection);
+        
         $realResult = mysqli_query($this->realConnection, $query);
         $this->setAffectedRows(mysqli_affected_rows($this->realConnection));
+
         mysqli_rollback($this->realConnection);
         return new o_mysqli_result($realResult);
     }
@@ -107,7 +109,9 @@ function o_mysqli_query($mysql, $query) {
 // Neutralize (close) all remaining connections
 function o_mysqli_neutralize() {
     global $connections;
-    throw new o_mysqli_exception("Zostawiłes otwartych ".count($connections)." połączeń");
+    if(count($connections) > 0) {
+        throw new o_mysqli_exception("Zostawiłes otwartych ".count($connections)." połączeń");
+    }
     for($i = 0; $i < count($connections); $i++) {
         $connections[$i]->close();
     }

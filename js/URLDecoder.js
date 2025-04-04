@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", init);
 let values = [];
 
 function init() {
+    document.title += " " + EXAM_NAME + " - część praktyczna";
     let url = new URL(window.location);
 
     let params = new URLSearchParams(url.search);
