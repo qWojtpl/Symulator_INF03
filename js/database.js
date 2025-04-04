@@ -2,45 +2,98 @@
 document.addEventListener("DOMContentLoaded", init);
 
 let databaseFrame;
+let databaseCanvas;
 let movingTable;
-let startX;
-let startY;
+let startMove = [];
 let tables = [];
+let relations = [];
 
 function init() {
     databaseFrame = document.getElementById("database-structure");
     initDatabaseStyles();
+    initCanvas();
+    initEvents();
+    createTable("test", ["id"], ["int PK"]);
+    createTable("test2", ["id"], ["int PK"]);
+    createTable("test-between", ["test1_id", "test2_id"], ["int", "int"]);
+    addRelation(tables[2].children[0], tables[0].children[0]);
+    addRelation(tables[2].children[1], tables[1].children[0]);
+    setTimeout(() => {
+        updateRelations();
+    }, 10);
+}
+
+function initDatabaseStyles() {
+    let contentDocument = databaseFrame.contentDocument;
+    let css = document.createElement("link");
+    css.setAttribute("rel", "stylesheet");
+    css.setAttribute("href", "../css/database.css");
+    contentDocument.querySelector("head").appendChild(css);
+    css = document.createElement("link");
+    css.setAttribute("rel", "stylesheet");
+    css.setAttribute("href", "../css/fonts.css");
+    contentDocument.querySelector("head").appendChild(css);
+    contentDocument.querySelector("body").style.overflow = "hidden";
+}
+
+function initCanvas() {
+    let contentDocument = databaseFrame.contentDocument;
+    databaseCanvas = contentDocument.createElement("canvas");
+    databaseCanvas.setAttribute("id", "database-structure-canvas");
+    contentDocument.querySelector("body").appendChild(databaseCanvas);
+}
+
+function initEvents() {
     databaseFrame.contentDocument.addEventListener("mousemove", (e) => {
         if(movingTable == null) {
             return;
         }
         let rect = movingTable.getBoundingClientRect();
-        let posX = e.pageX - (startX - rect.x);
+        let posX = e.pageX - (startMove[0] - rect.x);
         movingTable.style.left = posX;
-        startX = e.pageX;
-        let posY = e.pageY - (startY - rect.y);
+        startMove[0] = e.pageX;
+        let posY = e.pageY - (startMove[1] - rect.y);
         movingTable.style.top = posY;
-        startY = e.pageY;
+        startMove[1] = e.pageY;
+        updateRelations();
     });
-    createTable("test", ["id"], ["int PK"]);
-    createTable("test", ["id"], ["int PK"]);
 }
 
-function initDatabaseStyles() {
-    let css = document.createElement("link");
-    css.setAttribute("rel", "stylesheet");
-    css.setAttribute("href", "../css/database.css");
-    databaseFrame.contentDocument.querySelector("head").appendChild(css);
-    css = document.createElement("link");
-    css.setAttribute("rel", "stylesheet");
-    css.setAttribute("href", "../css/fonts.css");
-    databaseFrame.contentDocument.querySelector("head").appendChild(css);
+function addRelation(element1, element2) {
+    relations[relations.length] = {
+        firstElement: element1,
+        secondElement: element2
+    };
+    updateRelations();
+}
+
+function updateRelations() {
+    let frameRect = databaseFrame.getBoundingClientRect();
+    databaseCanvas.width = frameRect.width;
+    databaseCanvas.height = frameRect.height;
+    const context = databaseCanvas.getContext("2d");
+    context.clearRect(0, 0, context.width, context.height);
+    for(let i = 0; i < relations.length; i++) {
+        context.beginPath();
+        let firstElementRect = relations[i].firstElement.getBoundingClientRect();
+        let secondElementRect = relations[i].secondElement.getBoundingClientRect();
+        if(firstElementRect.x > secondElementRect.x) {
+            let temp = firstElementRect;
+            firstElementRect = secondElementRect;
+            secondElementRect = temp;
+        }
+        context.moveTo(firstElementRect.right - 5, firstElementRect.y + 5);
+        context.lineTo(secondElementRect.left, secondElementRect.y + 5);
+        context.strokeStyle = "#0078d4";
+        context.stroke();
+    }
 }
 
 function createTable(name, columns, columnTypes) {
     let contentDocument = databaseFrame.contentDocument;
     let table = contentDocument.createElement("div");
-    table.style.left = (tables.length * 300 + 50) + "px";
+    table.style.left = randomNumber(0, 600);
+    table.style.top = randomNumber(0, 600);
     table.classList.add("database-table");
     let tableName = contentDocument.createElement("span");
     tableName.innerText = name;
@@ -56,18 +109,19 @@ function createTable(name, columns, columnTypes) {
         row.appendChild(columnType);
         tableColumns.appendChild(row);
     }
+    tables[tables.length] = tableColumns;
     table.appendChild(tableColumns);
     table.addEventListener("mousedown", (e) => {
         movingTable = table;
-        table.style.zIndex = 2;
-        startX = e.pageX;
-        startY = e.pageY;
+        table.style.zIndex = 1;
+        startMove[0] = e.pageX;
+        startMove[1] = e.pageY;
     });
     table.addEventListener("mouseup", () => {
         movingTable.style.zIndex = 0;
         movingTable = null;
     });
-    tables[tables.length] = table;
     contentDocument.querySelector("body").appendChild(table);
 }
+
 

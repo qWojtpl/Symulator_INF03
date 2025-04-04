@@ -1,4 +1,8 @@
 
+#database-structure-canvas {
+    position: absolute;
+}
+
 .database-table {
     position: absolute;
     top: 20px;
@@ -44,7 +48,7 @@
 }
 
 #database-buttons button.active {
-    box-shadow: none;
+    box-shadow: 0px 1px 1px black;
 }
 
 #database-structure {

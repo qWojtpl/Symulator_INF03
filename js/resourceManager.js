@@ -45,3 +45,7 @@ function imgToBase64(imgElement) {
     ctx.drawImage(imgElement, 0, 0);
     return canvas.toDataURL('image/png');
 }
+
+function randomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+}
