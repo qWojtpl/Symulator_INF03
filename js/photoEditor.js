@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", init);
 
 let photopeaOptions;
 let imageList = [];
+let imageListDownloadFunctions = [];
 let imageOpened = false;
 let reloadEditor = true;
 let currentOpenedPhoto;
@@ -27,6 +28,10 @@ function init() {
 function createPhotoList() {
     if(imageOpened) {
         createPhotoEditor();
+        return;
+    }
+    if(imageList.length == 0) {
+        imageListDownloadFunctions[imageListDownloadFunctions.length] = createPhotoList;
         return;
     }
     let photoList = document.getElementById("photo-list");
@@ -223,6 +228,10 @@ function loadImageList() {
     xhr.open("GET", "../assets/" + EXAM_NAME + "/images.json", true);
     xhr.onload = function () {
         imageList = JSON.parse(this.responseText);
+        for(let i = 0; i < imageListDownloadFunctions.length; i++) {
+            imageListDownloadFunctions[i]();
+        }
+        imageListDownloadFunctions = [];
     };
     xhr.send();
 }

@@ -85,6 +85,7 @@ function handleExamSheet() {
 
 function handleDatabase() {
     hideAllFrames();
+    document.getElementById("database").style.display = "block";
 }
 
 function handlePhotos() {

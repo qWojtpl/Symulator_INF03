@@ -1,18 +1,31 @@
 
+document.addEventListener("DOMContentLoaded", init);
+
 let answerKey = [];
 let answerKeyMessages = [];
+let answerKeyDownloadFunction;
+let answerKeyMessagesDownloadFunction;
 let result = [];
 let skipCSS = false;
 
+function init() {
+    downloadExamAnswerKey();
+    downloadExamAnswerKeyMessages();
+    loadImageList();
+}
+
 function checkExam() {
     if(answerKey.length == 0) {
-        downloadExamAnswerKey();
+        answerKeyDownloadFunction = checkExam;
+        return;
     }
     if(answerKeyMessages.length == 0) {
-        downloadExamAnswerKeyMessages();
+        answerKeyMessagesDownloadFunction = checkExam;
+        return;
     }
     if(imageList.length == 0) {
-        loadImageList();   
+        imageListDownloadFunctions[imageListDownloadFunctions.length] = checkExam;
+        return;
     }
     saveCurrentFile();
     clearCheckExamResult();
@@ -335,6 +348,10 @@ function downloadExamAnswerKey() {
     xhr.open("GET", "../assets/" + EXAM_NAME + "/exam.key", true);
     xhr.onload = function () {
         answerKey = this.responseText.split("\r\n");
+        if(answerKeyDownloadFunction != null) {
+            answerKeyDownloadFunction();
+            answerKeyDownloadFunction = null;
+        }
     };
     xhr.send();
 }
@@ -344,6 +361,10 @@ function downloadExamAnswerKeyMessages() {
     xhr.open("GET", "../assets/" + EXAM_NAME + "/exam-messages.key", true);
     xhr.onload = function () {
         answerKeyMessages = this.responseText.split("\r\n");
+        if(answerKeyMessagesDownloadFunction != null) {
+            answerKeyMessagesDownloadFunction();
+            answerKeyMessagesDownloadFunction = null;
+        }
     };
     xhr.send();
 }
