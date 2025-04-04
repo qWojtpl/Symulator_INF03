@@ -7,20 +7,15 @@ let movingTable;
 let startMove = [];
 let tables = [];
 let relations = [];
+let structure;
 
 function init() {
     databaseFrame = document.getElementById("database-structure");
     initDatabaseStyles();
     initCanvas();
     initEvents();
-    createTable("test", ["id"], ["int PK"]);
-    createTable("test2", ["id"], ["int PK"]);
-    createTable("test-between", ["test1_id", "test2_id"], ["int", "int"]);
-    addRelation(tables[2].children[0], tables[0].children[0]);
-    addRelation(tables[2].children[1], tables[1].children[0]);
-    setTimeout(() => {
-        updateRelations();
-    }, 10);
+    
+    downloadStructure();
 }
 
 function initDatabaseStyles() {
@@ -59,6 +54,44 @@ function initEvents() {
     });
 }
 
+function initStructure() {
+    let keys = Object.keys(structure);
+    for(let i = 0; i < keys.length; i++) {
+        let names = [];
+        let types = [];
+        for(let j = 0; j < structure[keys[i]].length; j++) {
+            names[j] = structure[keys[i]][j][0];
+            types[j] = structure[keys[i]][j][1] + " " + structure[keys[i]][j][3] + " " + structure[keys[i]][j][4];
+        }
+        createTable(keys[i], names, types);
+    }
+    for(let i = 0; i < keys.length; i++) {
+        for(let j = 0; j < structure[keys[i]].length; j++) {
+            if(structure[keys[i]][j][3] == "MUL") {
+                let split = structure[keys[i]][j][5].split(" ");
+                for(let k = 0; k < keys.length; k++) {
+                    let found = false;
+                    if(split[0] == keys[k]) {
+                        for(let l = 0; l < structure[keys[k]].length; l++) {
+                            if(split[1] == structure[keys[k]][l][0]) {
+                                addRelation(tables[i].children[j], tables[k].children[l]);
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if(found) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    setTimeout(() => {
+        updateRelations();
+    }, 10);
+}
+
 function addRelation(element1, element2) {
     relations[relations.length] = {
         firstElement: element1,
@@ -82,8 +115,8 @@ function updateRelations() {
             firstElementRect = secondElementRect;
             secondElementRect = temp;
         }
-        context.moveTo(firstElementRect.right - 5, firstElementRect.y + 5);
-        context.lineTo(secondElementRect.left, secondElementRect.y + 5);
+        context.moveTo(firstElementRect.right, firstElementRect.y + 5);
+        context.lineTo(secondElementRect.left - 15, secondElementRect.y + 5);
         context.strokeStyle = "#0078d4";
         context.stroke();
     }
@@ -124,4 +157,14 @@ function createTable(name, columns, columnTypes) {
     contentDocument.querySelector("body").appendChild(table);
 }
 
+function downloadStructure() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "../lib/databaseSimulation.php?structure", true);
+    xhr.onload = function () {
+        structure = JSON.parse(this.responseText);
+        initStructure();
+    };
+    xhr.send();
+    
+}
 
