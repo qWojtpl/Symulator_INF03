@@ -34,7 +34,12 @@
     counter-reset: line;
     overflow-y: auto;
     height: 82vh;
-    border: 1px solid #2b2b2b;
+    border-top: 1px;
+    border-right: 0px;
+    border-bottom: 1px;
+    border-left: 1px;
+    border-style: solid;
+    border-color: #2b2b2b;
     margin: 0;
     outline: 0 solid transparent;
     padding-top: 10px;

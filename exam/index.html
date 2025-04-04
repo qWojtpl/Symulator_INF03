@@ -44,7 +44,15 @@
         <div id="output-container">
             <iframe id="output" class="output-frame" src="../assets/emptyCode.html"></iframe>
             <iframe id="exam-sheet" class="output-frame"></iframe>
-            <iframe id="database" class="output-frame"></iframe>
+            <div id="database" class="output-frame">
+                <div id="database-buttons">
+                    <button class="button-card active" id="database-button-structure"><span>Struktura</span></button>
+                    <button class="button-card" id="database-button-data"><span>Dane</span></button>
+                    <button class="button-card" id="database-button-queries"><span>Kwerendy</span></button>
+                </div>
+                
+                <iframe id="database-structure"></iframe>
+            </div>
             <div id="photo-list" class="output-frame"></div>
             <div id="photo-editor" class="output-frame">
                 <div id="photo-editor-panel">
