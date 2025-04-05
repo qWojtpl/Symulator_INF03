@@ -22,6 +22,9 @@ if(isset($_GET["structure"])) {
     }
 
     echo json_encode($tables);
+
+    mysqli_close($conn);
+
     return;
 
 }

@@ -8,6 +8,7 @@ let startMove = [];
 let tables = [];
 let relations = [];
 let structure;
+const relationColors = ["#0078d4", "#059862", "#aa2e04"];
 
 function init() {
     databaseFrame = document.getElementById("database-structure");
@@ -87,9 +88,11 @@ function initStructure() {
             }
         }
     }
-    setTimeout(() => {
-        updateRelations();
-    }, 10);
+}
+
+function openStructureTab() {
+    document.getElementById("database").style.display = "block";
+    updateRelations();
 }
 
 function addRelation(element1, element2) {
@@ -117,7 +120,7 @@ function updateRelations() {
         }
         context.moveTo(firstElementRect.right, firstElementRect.y + 5);
         context.lineTo(secondElementRect.left - 15, secondElementRect.y + 5);
-        context.strokeStyle = "#0078d4";
+        context.strokeStyle = relationColors[i % relationColors.length];
         context.stroke();
     }
 }

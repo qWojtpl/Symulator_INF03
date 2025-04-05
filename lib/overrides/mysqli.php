@@ -1,5 +1,6 @@
 <?php
 
+session_start();
 define("MAX_CONNECTIONS", 1);
 
 $connections = [];
@@ -40,7 +41,7 @@ class o_mysqli {
         $this->password = $password;
         $this->database = $database;
         $this->setAffectedRows(0);
-        $this->realConnection = mysqli_connect("localhost", "root", "", "baza");
+        $this->realConnection = mysqli_connect("localhost", "root", "", "biblioteka2");
         array_push($connections, $this);
     }
 
@@ -63,12 +64,30 @@ class o_mysqli {
         $reflection->setValue($this, $value);
     }
 
-    public function query(string $query) {
+    public function query($query) {
         mysqli_autocommit($this->realConnection, false);
         mysqli_begin_transaction($this->realConnection);
-        
+
+        if(isset($_SESSION["INF-03-QUERIES"])) {
+            $queries = explode(";", $_SESSION["INF-03-QUERIES"]);
+            for($i = 0; $i < count($queries); $i++) {
+                if($queries[$i] == "") {
+                    continue;
+                }
+                mysqli_query($this->realConnection, $queries[$i]);
+            }
+        }
+
         $realResult = mysqli_query($this->realConnection, $query);
         $this->setAffectedRows(mysqli_affected_rows($this->realConnection));
+        if(str_starts_with(strtoupper($query), "INSERT") || str_starts_with(strtoupper($query), "UPDATE") || str_starts_with(strtoupper($query), "DELETE")) {
+            if($this->affected_rows > 0) {
+                if(!isset($_SESSION["INF-03-QUERIES"])) {
+                    $_SESSION["INF-03-QUERIES"] = "";
+                }
+                $_SESSION["INF-03-QUERIES"] .= $query.";";
+            }
+        }
 
         mysqli_rollback($this->realConnection);
         return new o_mysqli_result($realResult);

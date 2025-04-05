@@ -85,7 +85,7 @@ function handleExamSheet() {
 
 function handleDatabase() {
     hideAllFrames();
-    document.getElementById("database").style.display = "block";
+    openStructureTab();
 }
 
 function handlePhotos() {
