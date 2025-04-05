@@ -63,7 +63,7 @@ function getCardIndex(element) {
 }
 
 function hideAllFrames() {
-    let framesToHide = document.getElementsByClassName("output-frame");
+    let framesToHide = document.getElementsByClassName("right-frame");
     for(let i = 0; i < framesToHide.length; i++) {
         framesToHide[i].style.display = "none";
     }

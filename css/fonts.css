@@ -35,3 +35,7 @@ nav span {
 .exam-summary-result span.ok, .exam-summary-result span.error {
     font-size: 28px;
 }
+
+#output-fullscreen {
+    font-size: 32px;
+}

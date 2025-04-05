@@ -1,1 +1,2 @@
 - Clicking tab on the eof causes console error
+- Output: detect if head and body exist

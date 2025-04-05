@@ -42,9 +42,14 @@
             </div>
         </div>
         <div id="output-container">
-            <iframe id="output" class="output-frame" src="../assets/emptyCode.html"></iframe>
-            <iframe id="exam-sheet" class="output-frame"></iframe>
-            <div id="database" class="output-frame">
+            <div id="output" class="right-frame">
+                <iframe id="output-frame" src="../assets/emptyCode.html"></iframe>
+                <div id="output-fullscreen">
+                    &#x26F6;
+                </div>
+            </div>
+            <iframe id="exam-sheet" class="right-frame"></iframe>
+            <div id="database" class="right-frame">
                 <div id="database-buttons">
                     <button class="button-card active" id="database-button-structure"><span>Struktura</span></button>
                     <button class="button-card" id="database-button-data"><span>Dane</span></button>
@@ -53,8 +58,8 @@
                 
                 <iframe id="database-structure"></iframe>
             </div>
-            <div id="photo-list" class="output-frame"></div>
-            <div id="photo-editor" class="output-frame">
+            <div id="photo-list" class="right-frame"></div>
+            <div id="photo-editor" class="right-frame">
                 <div id="photo-editor-panel">
                     <input type="text" id="photo-editor-filename" placeholder="Wpisz nazwę pliku..." autocomplete="off">
                     <button class="button button-run" id="photo-editor-save">Wyeksportuj</button>
@@ -67,7 +72,7 @@
                 </div>
                 <iframe id="photo-editor-frame"></iframe>
             </div>
-            <div id="exam-summary" class="output-frame">
+            <div id="exam-summary" class="right-frame">
                 <br>
                 <span id="exam-summary-title">Wyniki egzaminu</span><br>
                 <span id="exam-summary-subtitle">inf_03_2024_06_08</span><br><br> 

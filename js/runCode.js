@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", init);
 
 let button;
 let buttonHint = false;
+let fullscreen = false;
 
 function init() {
     button = document.getElementById("run-button");
@@ -20,15 +21,28 @@ function init() {
             buttonHint = false;
         }
     });
+    document.getElementById("output-fullscreen").addEventListener("click", () => {
+        let frame = document.getElementById("output-frame");
+        let fullscreenButton = document.getElementById("output-fullscreen");
+        fullscreen = !fullscreen;
+        if(fullscreen) {
+            frame.style.position = "absolute";
+            frame.style.zIndex = 2;
+            frame.style.left = 0;
+            frame.style.top = 0;
+            fullscreenButton.style.top = "100%";
+        } else {
+            frame.style.position = "static";
+            frame.style.zIndex = 0;
+            fullscreenButton.style.removeProperty("left");
+            fullscreenButton.style.removeProperty("top");
+        }
+    });
 }
 
 function updateRunButton() {
     let name = getCurrentFileName();
-    if(!name.endsWith(".html") && !name.endsWith(".php")) {
-        button.disabled = true;
-    } else {
-        button.disabled = false;
-    }
+    button.disabled = !name.endsWith(".html") && !name.endsWith(".php");
 }
 
 function runButtonClick(getValues, postValues) {
@@ -238,14 +252,13 @@ function formSubmit(form) {
 }
 
 function swapFrames() {
-    let oldFrame = document.getElementById("output");
+    let oldFrame = document.getElementById("output-frame");
     if(oldFrame != null) {
         oldFrame.remove();
     }
     let iframe = document.createElement("iframe");
-    iframe.classList.add("output-frame");
-    iframe.setAttribute("id", "output");
-    let container = document.getElementById("output-container");
+    iframe.setAttribute("id", "output-frame");
+    let container = document.getElementById("output");
     container.insertBefore(iframe, container.childNodes[1]);
     return iframe;
 }
