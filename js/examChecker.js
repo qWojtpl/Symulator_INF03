@@ -15,15 +15,15 @@ function init() {
 }
 
 function checkExam() {
-    if(answerKey.length == 0) {
+    if(answerKey.length === 0) {
         answerKeyDownloadFunction = checkExam;
         return;
     }
-    if(answerKeyMessages.length == 0) {
+    if(answerKeyMessages.length === 0) {
         answerKeyMessagesDownloadFunction = checkExam;
         return;
     }
-    if(imageList.length == 0) {
+    if(imageList.length === 0) {
         imageListDownloadFunctions[imageListDownloadFunctions.length] = checkExam;
         return;
     }
@@ -42,10 +42,10 @@ function checkExam() {
         let div = document.createElement("div");
         div.classList.add("exam-summary-result");
         let sign = document.createElement("span");
-        if(result[i].type == "ERROR") {
+        if(result[i].type === "ERROR") {
             sign.innerText = "X";
             sign.classList.add("error");
-        } else if(result[i].type == "RESULT") {
+        } else if(result[i].type === "RESULT") {
             sign.innerText = "✓";
             sign.classList.add("ok");
         }
@@ -179,7 +179,7 @@ function checkExamFile(fileName, index) {
     let contentDocument = virtualOutput.contentDocument;
 
     if(fileName.endsWith(".html")) {
-        setOutput(contentDocument, dumpster.textContent);
+        setOutput(contentDocument, dumpster.textContent); // text content is a plain html/php
     } else if(fileName.endsWith(".php")) {
         simulatePHP(contentDocument, dumpster.textContent);
     }
@@ -193,7 +193,7 @@ function checkExamFile(fileName, index) {
 }
 
 function checkLine(line, contentDocument, index) {
-    if(line == "\r\n" || line == "" || line == "\n") {
+    if(line === "\r\n" || line === "" || line === "\n") {
         return;
     }
     let decideCSS = false;
@@ -258,7 +258,7 @@ function checkLine(line, contentDocument, index) {
             c++;
             continue;
         }
-        if(elements.length == 0) {
+        if(elements.length === 0) {
             break;
         }
         if(cssStyle) {
@@ -273,12 +273,12 @@ function checkLine(line, contentDocument, index) {
                     let dashedProperty = "";
                     for(let k = 1; k < cssSplit[0].length; k++) {
                         dashedProperty += cssSplit[0].charAt(k);
-                        if(cssSplit[0].charAt(k + 1) == '-') {
+                        if(cssSplit[0].charAt(k + 1) === '-') {
                             dashedProperty += cssSplit[0].charAt(k + 2).toUpperCase();
                             k += 2;
                         }
                     }
-                    if(window.getComputedStyle(element)[dashedProperty] != cssSplit[1]) {
+                    if(window.getComputedStyle(element)[dashedProperty] !== cssSplit[1]) {
                         c = 0;
                         console.log(element);
                         console.log(window.getComputedStyle(element)[dashedProperty] + "!=" + cssSplit[1]);
@@ -295,7 +295,7 @@ function checkLine(line, contentDocument, index) {
                         content = content.substring(1);
                         let currentContent = element.innerHTML;
                         currentContent = currentContent.replaceAll("\t", "");
-                        if(currentContent.replaceAll('"', "") != content) {
+                        if(currentContent.replaceAll('"', "") !== content) {
                             continue;
                         }
                     }
@@ -308,7 +308,7 @@ function checkLine(line, contentDocument, index) {
             dummy.remove();
         }
     }
-    if(c != selectors.length) {
+    if(c !== selectors.length) {
         addCheckExamError(index);
         if(decideCSS) {
             skipCSS = true;
@@ -334,7 +334,6 @@ function addCheckExamCallback(index, type) {
 }
 
 function clearCheckExamResult() {
-    imageResults = [];
     result = [];
     skipCSS = false;
     let elements = document.querySelectorAll("#exam-summary div.exam-summary-result, #exam-summary dummy");
@@ -344,7 +343,7 @@ function clearCheckExamResult() {
 }
 
 function downloadExamAnswerKey() {
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
     xhr.open("GET", "../assets/" + EXAM_NAME + "/exam.key", true);
     xhr.onload = function () {
         answerKey = this.responseText.split("\r\n");
@@ -357,7 +356,7 @@ function downloadExamAnswerKey() {
 }
 
 function downloadExamAnswerKeyMessages() {
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
     xhr.open("GET", "../assets/" + EXAM_NAME + "/exam-messages.key", true);
     xhr.onload = function () {
         answerKeyMessages = this.responseText.split("\r\n");

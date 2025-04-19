@@ -6,7 +6,7 @@ let readyToSave = false;
 let regex;
 let targetColumn;
 
-let saveInterval = setInterval(() => {
+setInterval(() => {
     readyToSave = true;
 }, 1000 * 10);
 
@@ -30,7 +30,7 @@ function registerEvents(editor) {
     });
 
     editor.addEventListener("keydown", (e) => {
-        if(e.key == "Tab") {
+        if(e.key === "Tab") {
             e.preventDefault();
             if(e.shiftKey) {
 
@@ -38,13 +38,13 @@ function registerEvents(editor) {
                 insertChar("	");
             }
         }
-        if(e.key == "Enter" && e.shiftKey) {
+        if(e.key === "Enter" && e.shiftKey) {
             e.preventDefault();
         }
-        if(e.key == "ArrowUp") {
+        if(e.key === "ArrowUp") {
             e.preventDefault();
             let line = getCurrentLine(editor);
-            if(line != 0) {
+            if(line !== 0) {
                 let column = targetColumn;
                 if(targetColumn == null) {
                     column = getCurrentColumn();
@@ -57,10 +57,10 @@ function registerEvents(editor) {
                 }
                 setCursorPosition(editor.children[line - 1], pos); 
             }
-        } else if(e.key == "ArrowDown") {
+        } else if(e.key === "ArrowDown") {
             e.preventDefault();
             let line = getCurrentLine(editor);
-            if(line != editor.children.length - 1) {
+            if(line !== editor.children.length - 1) {
                 let column = targetColumn;
                 if(targetColumn == null) {
                     column = getCurrentColumn();
@@ -78,7 +78,7 @@ function registerEvents(editor) {
 
     editor.addEventListener("keyup", (e) => {
         let column = getCurrentColumn();
-        if(e.key != "ArrowLeft" && e.key != "ArrowRight") {
+        if(e.key !== "ArrowLeft" && e.key !== "ArrowRight") {
             if(column > targetColumn) {
                 targetColumn = column;
             }
@@ -131,7 +131,7 @@ function registerEvents(editor) {
 }
 
 function loadSyntax() {
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
 
     xhr.open("GET", "../js/options/syntax.json", true);
     xhr.onload = function () {
@@ -217,7 +217,7 @@ function updateEditorColors(editor) {
             editor.children[i].appendChild(color);
         }
 
-        if(start != divContent.length) {
+        if(start !== divContent.length) {
             let str = divContent.substring(start, divContent.length);
             editor.children[i].append(str);
         }
@@ -241,7 +241,7 @@ function setCursorPosition(lineElement, position) {
         total += lineElement.childNodes[i].textContent.length;
         if(total >= position) {
             let rangeElement = lineElement.childNodes[i];
-            if(rangeElement.tagName == "SPAN") {
+            if(rangeElement.tagName === "SPAN") {
                 rangeElement = rangeElement.childNodes[0];
             }
             range.setStart(rangeElement, position - indexStart); // column: 27, current child start: 14, so range starts now from 27-14
@@ -261,15 +261,16 @@ function getCurrentLine(editor) {
     let selection = document.getSelection();
     let node = selection.anchorNode.parentElement;
 
-    if(node.getAttribute("id") == "code-editor") {
+    if(node.getAttribute("id") === "code-editor") {
         node = selection.anchorNode;
     }
-    if(node.tagName == "SPAN") {
+
+    if(node.tagName === "SPAN") {
         node = node.parentElement;
     }
 
     for(let i = 0; i < editor.children.length; i++) {
-        if(node == editor.children[i]) {
+        if(node === editor.children[i]) {
             return i;
         }
     }
@@ -279,13 +280,13 @@ function getCurrentColumn() {
     let range = document.getSelection().getRangeAt(0);
     let startContainer = range.startContainer;
     let c = range.startOffset;
-    if(c == 0) {
+    if(c === 0) {
         return 0;
     }
-    if(startContainer.parentNode.tagName == "SPAN") {
+    if(startContainer.parentNode.tagName === "SPAN") {
         let absoluteChildren = startContainer.parentNode.parentNode.childNodes;
         for(let i = 0; i < absoluteChildren.length; i++) {
-            if(absoluteChildren[i] == startContainer.parentNode) {
+            if(absoluteChildren[i] === startContainer.parentNode) {
                 break;
             }
             c += absoluteChildren[i].textContent.length;
@@ -293,7 +294,7 @@ function getCurrentColumn() {
     } else {
         let absoluteChildren = startContainer.parentNode.childNodes;
         for(let i = 0; i < absoluteChildren.length; i++) {
-            if(absoluteChildren[i] == startContainer) {
+            if(absoluteChildren[i] === startContainer) {
                 break;
             }
             c += absoluteChildren[i].textContent.length;
@@ -325,7 +326,7 @@ function getEditorFormattedCode(editor) {
 }
 
 function setEditorFormattedCode(editor, code) {
-    if(code == null || code == "" || code == "null") {
+    if(code == null || code === "" || code === "null") {
         code = "<div><br></div>";
     }
     editor.innerHTML = code;

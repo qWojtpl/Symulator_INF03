@@ -10,7 +10,7 @@ function init() {
     editor = document.getElementById("code-editor");
     editorFiles = document.getElementById("editor-files");
     editorFiles.addEventListener("contextmenu", (e) => {
-        if(e.target != editorFiles) {
+        if(e.target !== editorFiles) {
             return;
         }
         newFileContextMenu(e);
@@ -21,13 +21,13 @@ function init() {
         if(!files[i].startsWith(EXAM_NAME)) {
             continue;
         }
-        if(getFileHeader(files[i]) == "image" || getFileHeader(files[i]) == "meta") {
+        if(getFileHeader(files[i]) === "image" || getFileHeader(files[i]) === "meta") {
             continue;
         }
-        createFileElement(files[i].replace(EXAM_NAME, ""), c == 0);
+        createFileElement(files[i].replace(EXAM_NAME, ""), c === 0);
         c++;
     }
-    if(c == 0) {
+    if(c === 0) {
         saveFile(EXAM_NAME + "index.php", "");
         createFileElement("index.php", true);
     }
@@ -63,7 +63,6 @@ function createFileElement(name, active) {
     paragraph.innerText = name;
     element.appendChild(paragraph);
     editorFiles.insertBefore(element, editorFiles.children[editorFiles.children.length - 1]);
-    let i = editorFiles.children.length - 2;
     element.addEventListener("click", (e) => {
         let el = e.target;
         if(!el.classList.contains("editor-file")) {
@@ -94,7 +93,7 @@ function newFileContextMenu(e) {
 function changeFileName(element) {
     let oldName = element.getAttribute("filename");
     let newName = prompt("Wpisz nową nazwę pliku", oldName);
-    if(newName == null || newName == "" || newName == oldName) {
+    if(newName == null || newName === "" || newName === oldName) {
         return;
     }
     if(newName.length > 32) {
@@ -118,7 +117,7 @@ function changeFileName(element) {
 
 function createNewFile() {
     let name = prompt("Wpisz nazwę pliku");
-    if(name == null || name == "") {
+    if(name == null || name === "") {
         return;
     }
     if(name.length > 32) {
@@ -136,7 +135,7 @@ function createNewFile() {
 }
 
 function deleteExistingFile(element) {
-    if(editorFiles.children.length == 2) {
+    if(editorFiles.children.length === 2) {
         alert("Nie możesz usunąć wszystkich plików!");
         return;
     }

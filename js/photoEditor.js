@@ -10,7 +10,7 @@ let currentOpenedPhoto;
 
 function init() {
     loadPhotopeaOptions();
-    if(imageList.length == 0) {
+    if(imageList.length === 0) {
         loadImageList();
     }
     document.getElementById("photo-editor-save").addEventListener("click", () => {
@@ -30,7 +30,7 @@ function createPhotoList() {
         createPhotoEditor();
         return;
     }
-    if(imageList.length == 0) {
+    if(imageList.length === 0) {
         imageListDownloadFunctions[imageListDownloadFunctions.length] = createPhotoList;
         return;
     }
@@ -45,7 +45,7 @@ function createPhotoList() {
         if(!files[i].startsWith(EXAM_NAME)) {
             continue;
         }
-        if(getFileHeader(files[i]) != "image") {
+        if(getFileHeader(files[i]) !== "image") {
             continue;
         }
         createPhotoElement(photoList, files[i].replace(EXAM_NAME, ""), getFile(files[i]), true);
@@ -119,7 +119,7 @@ function saveImage() {
         return;
     }
     let newName = document.getElementById("photo-editor-filename").value;
-    if(newName != currentOpenedPhoto) {
+    if(newName !== currentOpenedPhoto) {
         if(isFileExists(EXAM_NAME + newName)) {
             alert("Plik z taką nazwą już istnieje!");
             return;
@@ -163,7 +163,7 @@ function onFileReceived(e) {
         return;
     }
     let extension = split[split.length - 1];
-    if(extension == "jpg") {
+    if(extension === "jpg") {
         extension = "jpeg";
     }
 
@@ -215,7 +215,7 @@ function createPhotoEditor() {
 }
 
 function loadPhotopeaOptions() {
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
     xhr.open("GET", "../js/options/photopea.json", true);
     xhr.onload = function () {
         photopeaOptions = JSON.parse(this.responseText);
@@ -224,7 +224,7 @@ function loadPhotopeaOptions() {
 }
 
 function loadImageList() {
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
     xhr.open("GET", "../assets/" + EXAM_NAME + "/images.json", true);
     xhr.onload = function () {
         imageList = JSON.parse(this.responseText);

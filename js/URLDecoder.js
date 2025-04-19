@@ -14,7 +14,7 @@ function init() {
         let editorFiles = document.getElementById("editor-files");
 
         for(let i = 0; i < editorFiles.children.length; i++) {
-            if(editorFiles.children[i].getAttribute("filename") == file) {
+            if(editorFiles.children[i].getAttribute("filename") === file) {
                 fileClick(editorFiles.children[i]);
                 break;
             }
@@ -30,7 +30,7 @@ function init() {
 function setURLValue(key, value) {
     let changedValue = false;
     for(let i = 0; i < values.length; i++) {
-        if(values[i].key == key) {
+        if(values[i].key === key) {
             values[i].value = value;
             changedValue = true;
         }
@@ -43,7 +43,7 @@ function setURLValue(key, value) {
     }
     let valueStr = "";
     for(let i = 0; i < values.length; i++) {
-        if(i == 0) {
+        if(i === 0) {
             valueStr = "?";
         } else {
             valueStr += "&";

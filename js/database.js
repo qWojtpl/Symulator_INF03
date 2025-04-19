@@ -45,11 +45,9 @@ function initEvents() {
             return;
         }
         let rect = movingTable.getBoundingClientRect();
-        let posX = e.pageX - (startMove[0] - rect.x);
-        movingTable.style.left = posX;
+        movingTable.style.left = e.pageX - (startMove[0] - rect.x);
         startMove[0] = e.pageX;
-        let posY = e.pageY - (startMove[1] - rect.y);
-        movingTable.style.top = posY;
+        movingTable.style.top = e.pageY - (startMove[1] - rect.y);
         startMove[1] = e.pageY;
         updateRelations();
     });
@@ -68,13 +66,13 @@ function initStructure() {
     }
     for(let i = 0; i < keys.length; i++) {
         for(let j = 0; j < structure[keys[i]].length; j++) {
-            if(structure[keys[i]][j][3] == "MUL") {
+            if(structure[keys[i]][j][3] === "MUL") {
                 let split = structure[keys[i]][j][5].split(" ");
                 for(let k = 0; k < keys.length; k++) {
                     let found = false;
-                    if(split[0] == keys[k]) {
+                    if(split[0] === keys[k]) {
                         for(let l = 0; l < structure[keys[k]].length; l++) {
-                            if(split[1] == structure[keys[k]][l][0]) {
+                            if(split[1] === structure[keys[k]][l][0]) {
                                 addRelation(tables[i].children[j], tables[k].children[l]);
                                 found = true;
                                 break;
@@ -161,7 +159,7 @@ function createTable(name, columns, columnTypes) {
 }
 
 function downloadStructure() {
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
     xhr.open("GET", "../lib/databaseSimulation.php?structure", true);
     xhr.onload = function () {
         structure = JSON.parse(this.responseText);

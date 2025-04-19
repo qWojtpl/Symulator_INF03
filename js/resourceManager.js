@@ -21,7 +21,7 @@ function removeFile(name) {
 
 function isFileExists(name) {
     for(let i = 0; i < window.localStorage.length; i++) {
-        if(window.localStorage.key(i) == name) {
+        if(window.localStorage.key(i) === name) {
             return true;
         }
     }

@@ -3,8 +3,6 @@ document.addEventListener("DOMContentLoaded", init);
 
 let cards = [];
 let currentIndex = 0;
-let codeFrame;
-let examFrame;
 
 function init() {
     cards[0] = document.getElementById("card-code-result");
@@ -25,26 +23,26 @@ function init() {
 
 function cardClick(element) {
     let index = getCardIndex(element);
-    if(index == currentIndex && currentIndex != 4) {
+    if(index === currentIndex && currentIndex !== 4) {
         return;
     }
     currentIndex = index;
     for(let i = 0; i < cards.length; i++) {
         cards[i].classList.remove("active");
     }
-    if(index != 4) { 
+    if(index !== 4) {
         element.classList.add("active");
     }
     setURLValue("card", index);
-    if(index == 0) {
+    if(index === 0) {
         handleCodeResult();
-    } else if(index == 1) {
+    } else if(index === 1) {
         handleExamSheet();
-    } else if(index == 2) {
+    } else if(index === 2) {
         handleDatabase();
-    } else if(index == 3) {
+    } else if(index === 3) {
         handlePhotos();
-    } else if(index == 4) {
+    } else if(index === 4) {
         handleExamCheck();
     }
 }
@@ -55,7 +53,7 @@ function runCardClick(index) {
 
 function getCardIndex(element) {
     for(let i = 0; i < cards.length; i++) {
-        if(cards[i] == element) {
+        if(cards[i] === element) {
             return i;
         }
     }
