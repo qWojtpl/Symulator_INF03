@@ -64,7 +64,7 @@ function runButtonClick(getValues, postValues) {
 
 function simulatePHP(contentDocument, code, getValues, postValues) {
     
-    var data = new FormData();
+    let data = new FormData();
     data.append("vm-sandbox-code", code);
 
     if(getValues != null) {
@@ -79,7 +79,7 @@ function simulatePHP(contentDocument, code, getValues, postValues) {
         }
     }
 
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
 
     xhr.open("POST", "../lib/phpSimulation.php", true);
     xhr.onload = function () {
@@ -190,7 +190,7 @@ function initializeForms(contentDocument) {
 function linkClick(href) {
     const editorFiles = document.getElementById("editor-files");
 
-    getValues = [];
+    let getValues = [];
 
     let split = href.split("?");
 
@@ -208,7 +208,7 @@ function linkClick(href) {
 
     for(let i = 0; i < editorFiles.children.length; i++) {
         let file = editorFiles.children[i];
-        if(file.getAttribute("filename") == href) {
+        if(file.getAttribute("filename") === href) {
             fileClick(file);
             runButtonClick(getValues);
             return;
@@ -221,10 +221,10 @@ function formSubmit(form) {
     let formData = new FormData(form);
     let action = form.getAttribute("action");
 
-    getValues = [];
-    postValues = [];
+    let getValues = [];
+    let postValues = [];
 
-    if(form.getAttribute("method") == "post") {
+    if(form.getAttribute("method") === "post") {
         for (const [key, value] of formData) {
             postValues[postValues.length] = {
                 key: key,
@@ -243,7 +243,7 @@ function formSubmit(form) {
     const editorFiles = document.getElementById("editor-files");
     for(let i = 0; i < editorFiles.children.length; i++) {
         let file = editorFiles.children[i];
-        if(file.getAttribute("filename") == action || (action == null && file.classList.contains("active"))) {
+        if(file.getAttribute("filename") === action || (action == null && file.classList.contains("active"))) {
             fileClick(file);
             runButtonClick(getValues, postValues);
             return;

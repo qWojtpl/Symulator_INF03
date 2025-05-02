@@ -193,21 +193,27 @@ function checkExamFile(fileName, index) {
 }
 
 function checkLine(line, contentDocument, index) {
+    // check for empty line
     if(line === "\r\n" || line === "" || line === "\n") {
         return;
     }
+    // if decideCSS line isn't meet, all CSS won't be meet
     let decideCSS = false;
     if(line.startsWith("|")) {
         decideCSS = true;
         line = line.substring(1);
     }
+    // when the line starts with '=' then it's a CSS line
     let cssStyle = false;
     if(line.startsWith("=")) {
         cssStyle = true;
         line = line.substring(1);
     }
+    // one line can contain multiple selectors - separated with &&
     let selectors = line.split(" && ");
+    // when selector will be meet, c increases by 1
     let c = 0;
+    // add multiple-selector support (<main><div> could be <main><section> etc.)
     for(let i = 0; i < selectors.length; i++) {
         let selector = selectors[i];
         let contentSplit = selector.split(" @");
@@ -233,31 +239,39 @@ function checkLine(line, contentDocument, index) {
         }
     }
     for(let i = 0; i < selectors.length; i++) {
-        if(skipCSS) {
-            break;
+        // skipping CSS (if decideCSS failed) and it is CSS line (starts with =)
+        if(skipCSS && cssStyle) {
+            continue;
         }
         let selector = selectors[i];
+        // content is everything in one selector that is after @ sign
         let contentSplit = selector.split(" @");
         let negation = false;
+        // if the selector starts with ! then it's a negation - if the selector condition is meet, then line condition is not meet
         if(contentSplit[0].startsWith("!")) {
             negation = true;
+            // remove ! from the selector
             contentSplit[0] = contentSplit[0].replaceAll("!", "");
         }
         let elements;
-        let dummy
+        let dummy;
+        // create a dummy element to check * in CSS
         if(contentSplit[0].startsWith("*") && cssStyle) {
             dummy = document.createElement("dummy");
             contentDocument.querySelector("body").appendChild(dummy);
             elements = [dummy];
         } else {
+            // get all elements from selector
             elements = contentDocument.querySelectorAll(contentSplit[0]);
         }
+        // if we negate and there is any element selector is skipped
         if(elements.length > 0 && negation) {
-            continue;
+            break;
         } else if(negation) {
             c++;
             continue;
         }
+        // if there are no elements, then line condition won't be met
         if(elements.length === 0) {
             break;
         }
@@ -268,8 +282,10 @@ function checkLine(line, contentDocument, index) {
             let element = elements[j];
             if(contentSplit.length > 1) {
                 let content = contentSplit[1];
+                // handle CSS styles
                 if(cssStyle) {
                     let cssSplit = content.split(":");
+                    // handle dashed property (eg. background-color to backgroundColor)
                     let dashedProperty = "";
                     for(let k = 1; k < cssSplit[0].length; k++) {
                         dashedProperty += cssSplit[0].charAt(k);
@@ -278,20 +294,21 @@ function checkLine(line, contentDocument, index) {
                             k += 2;
                         }
                     }
+                    // if at least one CSS property is not met, we exit the loop
                     if(window.getComputedStyle(element)[dashedProperty] !== cssSplit[1]) {
                         c = 0;
-                        console.log(element);
-                        console.log(window.getComputedStyle(element)[dashedProperty] + "!=" + cssSplit[1]);
                         break;
                     }
+                    // in CSS styles c variable is set to the required value, but if at least one property is not met, we set c to 0 and exit the loop
                     continue;
                 } else {
+                    // if content starts with s (@s) then element's text must start with this content
                     if(content.startsWith("s")) {
                         content = content.substring(2);
                         if(!element.innerHTML.startsWith(content)) {
                             continue;
                         }
-                    } else {
+                    } else { // check strict content
                         content = content.substring(1);
                         let currentContent = element.innerHTML;
                         currentContent = currentContent.replaceAll("\t", "");
@@ -309,11 +326,13 @@ function checkLine(line, contentDocument, index) {
         }
     }
     if(c !== selectors.length) {
+        // line is not meet
         addCheckExamError(index);
         if(decideCSS) {
             skipCSS = true;
         }
     } else {
+        // line is meet
         addCheckExamResult(index);
     }
 } 

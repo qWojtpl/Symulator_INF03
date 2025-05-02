@@ -2,7 +2,20 @@
     {
         "regex": "\"[^\"]*\"",
         "color": "#c39178",
-        "flag": "g"
+        "flag": "g",
+        "comment": "Between \" and \""
+    },
+    {
+        "regex": "([a-zA-Z\\-0-9 \\*#,:]*)(?={)",
+        "color": "#dcdcaa",
+        "flag": "g",
+        "comment": "CSS selectors"
+    },
+    {
+        "regex": "(?<=:)([a-zA-Z\\-0-9 \"%]*)",
+        "color": "#c39178",
+        "flag": "g",
+        "comment": "CSS value"
     },
     {
         "regex": "([a-zA-Z_]*)(?=\\(.*\\))",
@@ -35,7 +48,7 @@
         "flag": "g"
     },
     {
-        "regex": ";",
+        "regex": "[;:]",
         "color": "white",
         "flag": "g"
     },
