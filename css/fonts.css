@@ -39,3 +39,17 @@ nav span {
 #output-fullscreen {
     font-size: 32px;
 }
+
+#main-page h1 {
+    font-size: 72px;
+    margin-bottom: 0;
+}
+
+#main-page h2 {
+    margin-top: 10px;
+    font-size: 32px;
+}
+
+footer h1, footer a {
+    font-size: 18px;
+}

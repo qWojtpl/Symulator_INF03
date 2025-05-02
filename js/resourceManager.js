@@ -49,3 +49,15 @@ function imgToBase64(imgElement) {
 function randomNumber(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
+
+function getTotalSizeInKB() {
+    let lsTotal = 0, xLen, x;
+    for (x in window.localStorage) {
+        if (!window.localStorage.hasOwnProperty(x)) {
+            continue;
+        }
+        xLen = ((window.localStorage[x].length + x.length) * 2);
+        lsTotal += xLen;
+    }
+    return (lsTotal / 1024).toFixed(2);
+}

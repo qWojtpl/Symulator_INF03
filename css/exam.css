@@ -19,6 +19,11 @@ nav {
     color: white;
 }
 
+nav a {
+    color: white;
+    text-decoration: none;
+}
+
 nav #logo {
     text-shadow: #FC0 1px 0 10px;
     cursor: pointer;
