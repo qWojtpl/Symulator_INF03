@@ -65,3 +65,11 @@ footer h1, footer a {
 #main-page #space-usage button {
     font-size: 18px;
 }
+
+#main-page .exam span:first-of-type {
+    font-size: 28px;
+}
+
+#main-page .exam span {
+    font-size: 18px;
+}

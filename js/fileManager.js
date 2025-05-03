@@ -1,7 +1,6 @@
 
 document.addEventListener("DOMContentLoaded", init);
 
-const EXAM_NAME = "inf_03_2024_06_08";
 let editor;
 let editorFiles;
 let saveString = [];

@@ -56,6 +56,64 @@ h4 {
     padding-right: 10px;
 }
 
+#space-usage button:hover {
+    background-color: #059862;
+}
+
+#exam-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3%;
+    justify-content: center;
+}
+
+.exam {
+    width: 400px;
+    height: 500px;
+    box-shadow: 2px 2px 3px black;
+    border: 1px solid #434343;
+    padding: 10px;
+    cursor: pointer;
+    transition: .3s;
+    margin-bottom: 50px;
+    border-radius: 5px;
+}
+
+.exam:hover {
+    transform: scale(1.05);
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+}
+
+.exam span:first-of-type {
+    text-shadow: #FC0 1px 0 10px;
+}
+
+.exam span {
+    color: white;
+    display: block;
+}
+
+.exam span img {
+    width: 64px;
+    border-radius: 5px;
+}
+
+.exam span img[src="./assets/php.png"] {
+    width: 100px;
+}
+
+.exam div {
+    width: 100%;
+    height: 40%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #434343;
+    box-shadow: 2px 2px 3px black;
+}
+
 footer {
     display: flex;
     gap: 20%;

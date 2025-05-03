@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", init);
 function init() {
     updateCurrentSpaceUsage();
     document.getElementById("clear-space").addEventListener("click", clearStorageClick);
+    registerExamListeners();
 }
 
 function updateCurrentSpaceUsage() {
@@ -24,4 +25,13 @@ function clearStorageClick() {
     }
     clearStorage();
     updateCurrentSpaceUsage();
+}
+
+function registerExamListeners() {
+    let exams = document.querySelectorAll(".exam");
+    for(let i = 0; i < exams.length; i++) {
+        exams[i].addEventListener("click", () => {
+            window.location.href = "./exam/?exam=" + exams[i].getAttribute("exam-id");
+        });
+    }
 }

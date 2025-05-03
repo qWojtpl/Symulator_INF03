@@ -1,4 +1,5 @@
 
+const EXAM_NAME = new URLSearchParams(new URL(window.location).search).get("exam");
 const HEADER = "HEADEROF-"
 
 function getFile(name) {

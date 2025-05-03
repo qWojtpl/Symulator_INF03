@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", init);
 let values = [];
 
 function init() {
+
     document.title += " " + EXAM_NAME + " - część praktyczna";
     let url = new URL(window.location);
 
@@ -24,6 +25,8 @@ function init() {
     if(params.has("card")) {
         runCardClick(params.get("card"));
     }
+
+    setURLValue("exam", EXAM_NAME);
 
 }
 
