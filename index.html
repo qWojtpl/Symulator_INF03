@@ -4,9 +4,10 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Symulator INF.03</title>
-        <script src="./js/resourceManager.js"></script>
         <link rel="stylesheet" href="./css/mainPage.css">
         <link rel="stylesheet" href="./css/fonts.css">
+        <script src="./js/resourceManager.js"></script>
+        <script src="./js/mainPage.js"></script>
     </head>
     <body>
         <nav>
@@ -15,9 +16,17 @@
         <main id="main-page">
             <h1>Symulator INF.03</h1>
             <h2>Przećwicz egzamin praktyczny INF.03. Za darmo.</h2>
-            <h4>Automatyczne sprawdzanie egzaminu</h4>
-            <h4>Sugestie, podpowiedzi odnośnie Twojego rozwiązania</h4>
-            <h4>Bez logowania i rejestracji</h4>
+            <div id="advertise">
+                <h4>Automatyczne sprawdzanie egzaminu</h4>
+                <h4>Sugestie i podpowiedzi odnośnie Twojego rozwiązania</h4>
+                <h4>Bez logowania i rejestracji</h4>
+            </div>
+
+            <div id="space-usage">
+                <span>Obecnie używasz: <span id="current-space-usage"></span> / 5 MB</span><br>
+                <button id="clear-space">Wyczyść pamięć</button>
+            </div>
+
             <div id="exam-list">
                 <div class="exam">
                     <img src="./assets/inf_03_2024_06_08/thumbnail.jpg" alt="inf_03_2024_06_08">

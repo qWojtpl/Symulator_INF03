@@ -53,3 +53,15 @@ nav span {
 footer h1, footer a {
     font-size: 18px;
 }
+
+#main-page #advertise h4 {
+    font-size: 24px;
+}
+
+#main-page #space-usage span {
+    font-size: 24px;
+}
+
+#main-page #space-usage button {
+    font-size: 18px;
+}

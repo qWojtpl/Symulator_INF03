@@ -61,3 +61,7 @@ function getTotalSizeInKB() {
     }
     return (lsTotal / 1024).toFixed(2);
 }
+
+function clearStorage() {
+    window.localStorage.clear();
+}
