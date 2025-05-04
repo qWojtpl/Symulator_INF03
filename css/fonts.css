@@ -28,6 +28,10 @@ nav span {
     font-size: 32px;
 }
 
+#exam-summary .exam-summary-title {
+    font-size: 38px;
+}
+
 #exam-summary-time, #exam-summary-time span {
     font-size: 28px;
 }

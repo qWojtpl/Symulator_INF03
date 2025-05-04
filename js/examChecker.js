@@ -39,6 +39,13 @@ function checkExam() {
     document.getElementById("virtual-code-dumpster").innerHTML = "";
     let examSummary = document.getElementById("exam-summary");
     for(let i = 0; i < result.length; i++) {
+        if(result[i].type === "TITLE") {
+            let title = document.createElement("h1");
+            title.innerText = answerKeyMessages[result[i].index];
+            title.classList.add("exam-summary-title");
+            examSummary.appendChild(title);
+            continue;
+        }
         let div = document.createElement("div");
         div.classList.add("exam-summary-result");
         let sign = document.createElement("span");
@@ -214,6 +221,9 @@ function checkLine(line, contentDocument, index) {
     if(line.startsWith("~")) {
         addCheckExamNeutral(index);
         return;
+    } else if(line.startsWith("?")) { // ? means that the line is a title line
+        addCheckExamTitle(index);
+        return;
     }
     // if decideCSS line isn't meet, all CSS won't be meet
     let decideCSS = false;
@@ -363,6 +373,10 @@ function addCheckExamNeutral(index) {
     addCheckExamCallback(index, "NEUTRAL");
 }
 
+function addCheckExamTitle(index) {
+    addCheckExamCallback(index, "TITLE");
+}
+
 function addCheckExamResult(index) {
     addCheckExamCallback(index, "RESULT");
 }
@@ -377,7 +391,7 @@ function addCheckExamCallback(index, type) {
 function clearCheckExamResult() {
     result = [];
     skipCSS = false;
-    let elements = document.querySelectorAll("#exam-summary div.exam-summary-result, #exam-summary dummy");
+    let elements = document.querySelectorAll("#exam-summary div.exam-summary-result, #exam-summary dummy, .exam-summary-title");
     for(let i = 0; i < elements.length; i++) {
         elements[i].remove();
     }
