@@ -48,6 +48,9 @@ function checkExam() {
         } else if(result[i].type === "RESULT") {
             sign.innerText = "✓";
             sign.classList.add("ok");
+        } else if(result[i].type === "NEUTRAL") {
+            sign.innerText = "─";
+            sign.classList.add("neutral");
         }
         div.appendChild(sign);
         let message = document.createElement("span");
@@ -197,6 +200,11 @@ function checkLine(line, contentDocument, index) {
     if(line === "\r\n" || line === "" || line === "\n") {
         return;
     }
+    // ~ means that the line cannot be determined due to limitations (e.g. variable names in Polish/English)
+    if(line.startsWith("~")) {
+        addCheckExamNeutral(index);
+        return;
+    }
     // if decideCSS line isn't meet, all CSS won't be meet
     let decideCSS = false;
     if(line.startsWith("|")) {
@@ -261,7 +269,7 @@ function checkLine(line, contentDocument, index) {
             contentDocument.querySelector("body").appendChild(dummy);
             elements = [dummy];
         } else {
-            // get all elements from selector
+            // get all elements from a selector
             elements = contentDocument.querySelectorAll(contentSplit[0]);
         }
         // if we negate and there is any element selector is skipped
@@ -285,7 +293,7 @@ function checkLine(line, contentDocument, index) {
                 // handle CSS styles
                 if(cssStyle) {
                     let cssSplit = content.split(":");
-                    // handle dashed property (eg. background-color to backgroundColor)
+                    // handle dashed property (e.g., background-color to backgroundColor)
                     let dashedProperty = "";
                     for(let k = 1; k < cssSplit[0].length; k++) {
                         dashedProperty += cssSplit[0].charAt(k);
@@ -339,6 +347,10 @@ function checkLine(line, contentDocument, index) {
 
 function addCheckExamError(index) {
     addCheckExamCallback(index, "ERROR");
+}
+
+function addCheckExamNeutral(index) {
+    addCheckExamCallback(index, "NEUTRAL");
 }
 
 function addCheckExamResult(index) {

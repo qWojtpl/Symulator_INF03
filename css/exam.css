@@ -137,9 +137,10 @@ iframe.right-frame {
 .exam-summary-result:hover {
     transform: scale(1.02);
     background-color: #2b2b2b;
+    cursor: pointer;
 }
 
-.exam-summary-result span.ok, .exam-summary-result span.error {
+.exam-summary-result span.ok, .exam-summary-result span.error, .exam-summary-result span.neutral {
     margin-right: 2%;
     margin-left: 1%;
 }
@@ -155,6 +156,10 @@ iframe.right-frame {
 
 .exam-summary-result span.ok {
     color: green;
+}
+
+.exam-summary-result span.neutral {
+    color: orange;
 }
 
 .exam-summary-result div {

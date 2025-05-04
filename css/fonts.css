@@ -32,8 +32,12 @@ nav span {
     font-size: 28px;
 }
 
-.exam-summary-result span.ok, .exam-summary-result span.error {
-    font-size: 28px;
+.exam-summary-result span {
+    font-size: 18px;
+}
+
+.exam-summary-result span.ok, .exam-summary-result span.error, .exam-summary-result span.neutral {
+    font-size: 42px;
 }
 
 #output-fullscreen {
