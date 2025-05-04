@@ -11,7 +11,7 @@ function createContextMenu(x, y, names, functions, fontSize = 16) {
     contextMenu.style.top = y + "px";
     for(let i = 0; i < names.length; i++) {
         let button = document.createElement("button");
-        button.innerText = names[i];
+        button.innerHTML = names[i];
         button.addEventListener("click", functions[i]);
         button.setAttribute("style", "font-size: " + fontSize + "px");
         contextMenu.appendChild(button);
