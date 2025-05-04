@@ -3,7 +3,7 @@ let contextMenu;
 
 document.addEventListener("click", removeContextMenu);
 
-function createContextMenu(x, y, names, functions) {
+function createContextMenu(x, y, names, functions, fontSize = 16) {
     removeContextMenu();
     contextMenu = document.createElement("div");
     contextMenu.classList.add("context-menu");
@@ -13,6 +13,7 @@ function createContextMenu(x, y, names, functions) {
         let button = document.createElement("button");
         button.innerText = names[i];
         button.addEventListener("click", functions[i]);
+        button.setAttribute("style", "font-size: " + fontSize + "px");
         contextMenu.appendChild(button);
     }
     document.querySelector("body").appendChild(contextMenu);

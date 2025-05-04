@@ -54,9 +54,19 @@ function checkExam() {
         }
         div.appendChild(sign);
         let message = document.createElement("span");
-        message.innerText = answerKeyMessages[result[i].index];
+        let answerKeySplit = answerKeyMessages[result[i].index].split(" @@@ ");
+        message.innerText = answerKeySplit[0];
         div.appendChild(message);
         examSummary.appendChild(div);
+        if(answerKeySplit.length > 1) {
+            div.addEventListener("mouseover", () => {
+                let position = div.getBoundingClientRect();
+                createContextMenu(position.x * 0.99, position.bottom * 1.01, [answerKeySplit[1]], [() => {}], 20);
+            });
+            div.addEventListener("mouseleave", () => {
+                removeContextMenu();
+            });
+        }
     }
     for(let i = 0; i < imageList.length; i++) {
         checkExamImage(imageList[i]);
