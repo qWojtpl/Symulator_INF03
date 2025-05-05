@@ -237,8 +237,18 @@ function checkLine(line, contentDocument, index) {
         cssStyle = true;
         line = line.substring(1);
     }
+    let jsScript = false;
+    if(line.startsWith("$")) {
+        jsScript = true;
+        line = line.substring(1);
+    }
     // one line can contain multiple selectors - separated with &&
-    let selectors = line.split(" && ");
+    let selectors;
+    if(!jsScript) {
+        selectors = line.split(" && ");
+    } else {
+        selectors = [line];
+    }
     // when selector will be meet, c increases by 1
     let c = 0;
     // add multiple-selector support (<main><div> could be <main><section> etc.)
@@ -314,14 +324,7 @@ function checkLine(line, contentDocument, index) {
                 if(cssStyle) {
                     let cssSplit = content.split(":");
                     // handle dashed property (e.g., background-color to backgroundColor)
-                    let dashedProperty = "";
-                    for(let k = 1; k < cssSplit[0].length; k++) {
-                        dashedProperty += cssSplit[0].charAt(k);
-                        if(cssSplit[0].charAt(k + 1) === '-') {
-                            dashedProperty += cssSplit[0].charAt(k + 2).toUpperCase();
-                            k += 2;
-                        }
-                    }
+                    let dashedProperty = createDashedProperty(cssSplit[0]);
                     // if at least one CSS property is not met, we exit the loop
                     if(window.getComputedStyle(element)[dashedProperty] !== cssSplit[1]) {
                         c = 0;
@@ -329,6 +332,14 @@ function checkLine(line, contentDocument, index) {
                     }
                     // in CSS styles c variable is set to the required value, but if at least one property is not met, we set c to 0 and exit the loop
                     continue;
+                } else if(jsScript) {
+                    let res = eval("function runTest() { " + content + "} runTest();");
+                    if(res) {
+                        console.log("JS test " + (index + 1) + " passed");
+                    } else {
+                        console.log("JS test " + (index + 1) + " failed");
+                        break;
+                    }
                 } else {
                     // if content starts with s (@s) then element's text must start with this content
                     if(content.startsWith("s")) {
@@ -386,6 +397,18 @@ function addCheckExamCallback(index, type) {
         index: index,
         type: type
     }
+}
+
+function createDashedProperty(property) {
+    let dashedProperty = "";
+    for(let k = 1; k < property.length; k++) {
+        dashedProperty += property.charAt(k);
+        if(property.charAt(k + 1) === '-') {
+            dashedProperty += property.charAt(k + 2).toUpperCase();
+            k += 2;
+        }
+    }
+    return dashedProperty;
 }
 
 function clearCheckExamResult() {
