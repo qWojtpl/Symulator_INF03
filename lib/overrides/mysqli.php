@@ -41,7 +41,28 @@ class o_mysqli {
         $this->password = $password;
         $this->database = $database;
         $this->setAffectedRows(0);
-        $this->realConnection = mysqli_connect("localhost", "root", "", "biblioteka2");
+        $this->realConnection = mysqli_connect(MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD);
+
+        // check db name
+
+        mysqli_select_db($this->realConnection, "simulator_schema");
+        $statement = mysqli_prepare($this->realConnection, "SELECT required FROM required_names WHERE exam=? LIMIT 1");
+        $exam = EXAM_NAME;
+        mysqli_stmt_bind_param($statement, "s", $exam);
+        mysqli_stmt_execute($statement);
+
+        mysqli_stmt_bind_result($statement, $requiredDb);
+        mysqli_stmt_fetch($statement);
+        mysqli_stmt_close($statement);
+
+        if($database != $requiredDb) {
+            throw new o_mysqli_exception("Nie istnieje baza danych o nazwie ".$database);
+        }
+
+        mysqli_select_db($this->realConnection, EXAM_NAME);
+
+        //
+
         array_push($connections, $this);
     }
 
