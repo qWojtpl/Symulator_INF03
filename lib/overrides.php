@@ -20,6 +20,9 @@ function callOverrides($sandbox) {
     $sandbox->defineFunc("mysqli_query", function($a, $b) {
         return o_mysqli_query($a, $b);
     });
+    $sandbox->defineFunc("mysqli_select_db", function($a, $b) {
+        return o_mysqli_select_db($a, $b);
+    });
 }
 
 ?>

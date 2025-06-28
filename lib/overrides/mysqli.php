@@ -43,25 +43,7 @@ class o_mysqli {
         $this->setAffectedRows(0);
         $this->realConnection = mysqli_connect(MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD);
 
-        // check db name
-
-        mysqli_select_db($this->realConnection, "simulator_schema");
-        $statement = mysqli_prepare($this->realConnection, "SELECT required FROM required_names WHERE exam=? LIMIT 1");
-        $exam = EXAM_NAME;
-        mysqli_stmt_bind_param($statement, "s", $exam);
-        mysqli_stmt_execute($statement);
-
-        mysqli_stmt_bind_result($statement, $requiredDb);
-        mysqli_stmt_fetch($statement);
-        mysqli_stmt_close($statement);
-
-        if($database != $requiredDb) {
-            throw new o_mysqli_exception("Nie istnieje baza danych o nazwie ".$database);
-        }
-
-        mysqli_select_db($this->realConnection, EXAM_NAME);
-
-        //
+        $this->select_db($database);
 
         array_push($connections, $this);
     }
@@ -78,6 +60,24 @@ class o_mysqli {
         }
         $connections = $newConnections;
         mysqli_close($this->realConnection);
+    }
+
+    public function select_db($database) {
+        mysqli_select_db($this->realConnection, "simulator_schema");
+        $statement = mysqli_prepare($this->realConnection, "SELECT required FROM required_names WHERE exam=? LIMIT 1");
+        $exam = EXAM_NAME;
+        mysqli_stmt_bind_param($statement, "s", $exam);
+        mysqli_stmt_execute($statement);
+
+        mysqli_stmt_bind_result($statement, $requiredDb);
+        mysqli_stmt_fetch($statement);
+        mysqli_stmt_close($statement);
+
+        if($database != $requiredDb) {
+            throw new o_mysqli_exception("Nie istnieje baza danych o nazwie ".$database);
+        }
+
+        mysqli_select_db($this->realConnection, EXAM_NAME);
     }
 
     private function setAffectedRows($value) {
@@ -105,7 +105,7 @@ class o_mysqli {
 
         $realResult = mysqli_query($this->realConnection, $query);
         $this->setAffectedRows(mysqli_affected_rows($this->realConnection));
-        if(str_starts_with(strtoupper($query), "INSERT") || str_starts_with(strtoupper($query), "UPDATE") || str_starts_with(strtoupper($query), "DELETE")) {
+        if((str_starts_with(strtoupper($query), "INSERT") || str_starts_with(strtoupper($query), "UPDATE") || str_starts_with(strtoupper($query), "DELETE")) && $realResult) {
             if($this->affected_rows > 0) {
                 if(!isset($_SESSION[$sessionSource])) {
                     $_SESSION[$sessionSource] = "";
@@ -148,6 +148,10 @@ function o_mysqli_close($mysql) {
 
 function o_mysqli_query($mysql, $query) {
     $mysql->query($query);
+}
+
+function o_mysqli_select_db($mysql, $db) {
+    $mysql->select_db($db);
 }
 
 // Neutralize (close) all remaining connections
