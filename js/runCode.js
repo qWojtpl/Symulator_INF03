@@ -66,6 +66,7 @@ function simulatePHP(contentDocument, code, getValues, postValues) {
     
     let data = new FormData();
     data.append("vm-sandbox-code", code);
+    data.append("vm-sandbox-exam", EXAM_NAME);
 
     if(getValues != null) {
         for(let i = 0; i < getValues.length; i++) {

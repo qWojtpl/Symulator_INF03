@@ -1,8 +1,11 @@
 <?php
 
-if(!isset($_POST["vm-sandbox-code"])) {
+if(!isset($_POST["vm-sandbox-code"]) || !isset($_POST["vm-sandbox-exam"])) {
+    echo "Error";
     return;
 }
+
+define("EXAM_NAME", $_POST["vm-sandbox-exam"]);
 
 require_once("./functions.php");
 require_once("./overrides.php");

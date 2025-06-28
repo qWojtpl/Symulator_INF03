@@ -68,8 +68,12 @@ class o_mysqli {
         mysqli_autocommit($this->realConnection, false);
         mysqli_begin_transaction($this->realConnection);
 
-        if(isset($_SESSION["INF-03-QUERIES"])) {
-            $queries = explode(";", $_SESSION["INF-03-QUERIES"]);
+        $querySeparator = "↵";
+        $query = str_replace($querySeparator, "", $query);
+        $sessionSource = "INF03-QUERIES".EXAM_NAME;
+
+        if(isset($_SESSION[$sessionSource])) {
+            $queries = explode($querySeparator, $_SESSION[$sessionSource]);
             for($i = 0; $i < count($queries); $i++) {
                 if($queries[$i] == "") {
                     continue;
@@ -82,10 +86,10 @@ class o_mysqli {
         $this->setAffectedRows(mysqli_affected_rows($this->realConnection));
         if(str_starts_with(strtoupper($query), "INSERT") || str_starts_with(strtoupper($query), "UPDATE") || str_starts_with(strtoupper($query), "DELETE")) {
             if($this->affected_rows > 0) {
-                if(!isset($_SESSION["INF-03-QUERIES"])) {
-                    $_SESSION["INF-03-QUERIES"] = "";
+                if(!isset($_SESSION[$sessionSource])) {
+                    $_SESSION[$sessionSource] = "";
                 }
-                $_SESSION["INF-03-QUERIES"] .= $query.";";
+                $_SESSION[$sessionSource] .= $query.$querySeparator;
             }
         }
 
