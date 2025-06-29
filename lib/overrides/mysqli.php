@@ -105,7 +105,7 @@ class o_mysqli {
 
         $realResult = mysqli_query($this->realConnection, $query);
         $this->setAffectedRows(mysqli_affected_rows($this->realConnection));
-        if((str_starts_with(strtoupper($query), "INSERT") || str_starts_with(strtoupper($query), "UPDATE") || str_starts_with(strtoupper($query), "DELETE")) && $realResult) {
+        if($this->isSaveQuery($query) && $realResult) {
             if($this->affected_rows > 0) {
                 if(!isset($_SESSION[$sessionSource])) {
                     $_SESSION[$sessionSource] = "";
@@ -114,8 +114,21 @@ class o_mysqli {
             }
         }
 
-        mysqli_rollback($this->realConnection);
+        echo mysqli_rollback($this->realConnection);
         return new o_mysqli_result($realResult);
+    }
+
+    private function isSaveQuery($query) {
+        $saveCommands = ["INSERT", "UPDATE", "DELETE", "TRUNCATE"];
+
+        $upperQuery = strtoupper($query);
+
+        for($i = 0; $i < count($saveCommands); $i++) {
+            if(str_starts_with($upperQuery, $saveCommands[$i])) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
@@ -158,7 +171,7 @@ function o_mysqli_select_db($mysql, $db) {
 function o_mysqli_neutralize() {
     global $connections;
     if(count($connections) > 0) {
-        throw new o_mysqli_exception("Zostawiłes otwartych ".count($connections)." połączeń");
+        throw new o_mysqli_exception("Zostawiłeś ".count($connections)." otwartych połączeń");
     }
     for($i = 0; $i < count($connections); $i++) {
         $connections[$i]->close();

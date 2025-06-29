@@ -1,12 +1,12 @@
 <?php
 
-include("./overrides/mysqli.php");
+require_once("./config.php");
 
 if(isset($_GET["structure"])) {
 
     header("Content-Type: application/json; charset=utf-8");
 
-    $conn = mysqli_connect("localhost", "root", "");
+    $conn = mysqli_connect(MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD);
 
     $query = mysqli_query($conn, "SELECT c.TABLE_NAME, c.COLUMN_NAME, c.COLUMN_TYPE, c.IS_NULLABLE, c.COLUMN_KEY, c.EXTRA, COALESCE(CONCAT(k.REFERENCED_TABLE_NAME, ' ', k.REFERENCED_COLUMN_NAME), 'NULL') AS ref FROM INFORMATION_SCHEMA.COLUMNS c LEFT JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE k ON c.TABLE_SCHEMA = k.TABLE_SCHEMA AND c.TABLE_NAME = k.TABLE_NAME AND c.COLUMN_NAME = k.COLUMN_NAME AND k.REFERENCED_TABLE_NAME IS NOT NULL WHERE c.TABLE_SCHEMA = 'inf_03_2024_06_08' ORDER BY c.TABLE_NAME, c.ORDINAL_POSITION");
 
