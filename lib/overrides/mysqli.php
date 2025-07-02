@@ -96,6 +96,17 @@ class o_mysqli {
 
     }
 
+    public function history() {
+        if(!isset($_SESSION["INF03-QUERIES-".EXAM_NAME])) {
+            return;
+        }
+        echo $_SESSION["INF03-QUERIES-".EXAM_NAME];
+    }
+
+    public function reset() {
+        unset($_SESSION["INF03-QUERIES-".EXAM_NAME]);
+    }
+
     private function setAffectedRows($value) {
         $reflection = new ReflectionProperty(o_mysqli::class, "affected_rows");
         $reflection->setValue($this, $value);
@@ -129,7 +140,6 @@ class o_mysqli {
                 if($queries[$i] == "") {
                     continue;
                 }
-                echo $queries[$i]."\n";
                 mysqli_query($this->realConnection, $queries[$i]);
             }
         }
@@ -232,6 +242,14 @@ function o_mysqli_query($mysql, $query) {
 
 function o_mysqli_select_db($mysql, $db) {
     $mysql->select_db($db);
+}
+
+function o_mysqli_history($mysql) {
+    $mysql->history();
+}
+
+function o_mysqli_reset($mysql) {
+    $mysql->reset();
 }
 
 // Neutralize (close) all remaining connections

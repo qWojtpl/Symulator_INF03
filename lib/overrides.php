@@ -23,6 +23,12 @@ function callOverrides($sandbox) {
     $sandbox->defineFunc("mysqli_select_db", function($a, $b) {
         return o_mysqli_select_db($a, $b);
     });
+    $sandbox->defineFunc("mysqli_history", function($a) {
+        return o_mysqli_history($a);
+    });
+    $sandbox->defineFunc("mysqli_reset", function($a) {
+        return o_mysqli_reset($a);
+    });
 }
 
 ?>
