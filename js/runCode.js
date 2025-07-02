@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", init);
 let button;
 let buttonHint = false;
 let fullscreen = false;
+let emptyBackgroundColor = false;
 
 function init() {
     button = document.getElementById("run-button");
@@ -31,11 +32,19 @@ function init() {
             frame.style.left = 0;
             frame.style.top = 0;
             fullscreenButton.style.top = "100%";
+            if(frame.style.backgroundColor === "" || frame.style.backgroundColor === "transparent") {
+                frame.style.backgroundColor = "white";
+                emptyBackgroundColor = true;
+            }
         } else {
             frame.style.position = "static";
             frame.style.zIndex = 0;
             fullscreenButton.style.removeProperty("left");
             fullscreenButton.style.removeProperty("top");
+            if(emptyBackgroundColor) {
+                emptyBackgroundColor = false;
+                frame.style.backgroundColor = "transparent";
+            }
         }
     });
 }
