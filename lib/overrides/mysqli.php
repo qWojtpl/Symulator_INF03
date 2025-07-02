@@ -86,6 +86,10 @@ class o_mysqli {
     }
 
     public function query($query) {
+        if($this->isProhibitedQuery($query)) {
+            throw new o_mysqli_exception("Nie można tego wykonać zapytania: ".$query." (SANDBOX_PROHIBITED_QUERY)");
+        }
+
         mysqli_autocommit($this->realConnection, false);
         mysqli_begin_transaction($this->realConnection);
 
@@ -116,6 +120,19 @@ class o_mysqli {
 
         echo mysqli_rollback($this->realConnection);
         return new o_mysqli_result($realResult);
+    }
+
+    private function isProhibitedQuery($query) {
+        $prohibitedCommands = ["DROP", "CREATE DATABASE"];
+
+        $upperQuery = strtoupper($query);
+
+        for($i = 0; $i < count($prohibitedCommands); $i++) {
+            if(str_starts_with($upperQuery, $prohibitedCommands[$i])) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private function isSaveQuery($query) {
