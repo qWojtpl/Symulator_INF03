@@ -28,6 +28,9 @@ class o_mysqli {
 
     private $realConnection;
 
+    private $selectedDb = false;
+    private $dbTables = [];
+
     public function __construct($hostname = null, $username = null, $password = null, $database = null) {
         if($hostname === "--dummy") {
             return;
@@ -63,6 +66,11 @@ class o_mysqli {
     }
 
     public function select_db($database) {
+
+        if($this->selectedDb) {
+            return;
+        }
+
         mysqli_select_db($this->realConnection, "simulator_schema");
         $statement = mysqli_prepare($this->realConnection, "SELECT required FROM required_names WHERE exam=? LIMIT 1");
         $exam = EXAM_NAME;
@@ -77,7 +85,15 @@ class o_mysqli {
             throw new o_mysqli_exception("Nie istnieje baza danych o nazwie ".$database);
         }
 
+        $this->selectedDb = true;
+
         mysqli_select_db($this->realConnection, EXAM_NAME);
+
+        $allTables = mysqli_query($this->realConnection, "SHOW TABLES");
+        while($row = mysqli_fetch_array($allTables)) {
+            array_push($this->dbTables, $row[0]);
+        }
+
     }
 
     private function setAffectedRows($value) {
@@ -86,16 +102,26 @@ class o_mysqli {
     }
 
     public function query($query) {
+
         if($this->isProhibitedQuery($query)) {
-            throw new o_mysqli_exception("Nie można tego wykonać zapytania: ".$query." (SANDBOX_PROHIBITED_QUERY)");
+            throw new o_mysqli_exception("Nieprawidłowe zapytanie: ".$query);
         }
+
+        $querySeparator = "↵";
+        $query = str_replace($querySeparator, "", $query); // remove query separator
+        $query = preg_replace('/\s+/', ' ', $query); // remove double spaces
+        $sessionSource = "INF03-QUERIES-".EXAM_NAME;
+
+        // create tables
+
+        for($i = 0; $i < count($this->dbTables); $i++) {
+            mysqli_query($this->realConnection, "CREATE TABLE `".$this->dbTables[$i]."@".session_id()."` AS SELECT * FROM ".$this->dbTables[$i]);
+        }
+
+        //
 
         mysqli_autocommit($this->realConnection, false);
         mysqli_begin_transaction($this->realConnection);
-
-        $querySeparator = "↵";
-        $query = str_replace($querySeparator, "", $query);
-        $sessionSource = "INF03-QUERIES".EXAM_NAME;
 
         if(isset($_SESSION[$sessionSource])) {
             $queries = explode($querySeparator, $_SESSION[$sessionSource]);
@@ -103,45 +129,69 @@ class o_mysqli {
                 if($queries[$i] == "") {
                     continue;
                 }
+                echo $queries[$i]."\n";
                 mysqli_query($this->realConnection, $queries[$i]);
             }
         }
 
-        $realResult = mysqli_query($this->realConnection, $query);
-        $this->setAffectedRows(mysqli_affected_rows($this->realConnection));
-        if($this->isSaveQuery($query) && $realResult) {
-            if($this->affected_rows > 0) {
-                if(!isset($_SESSION[$sessionSource])) {
-                    $_SESSION[$sessionSource] = "";
+        // prepare for DDL (correct table name)
+        if($this->isDDLQuery($query)) {
+            $ex = explode(" ", $query);
+            if(count($ex) >= 3) {
+                for($i = 0; $i < count($this->dbTables); $i++) {
+                    $ex[2] = str_replace($this->dbTables[$i], "`".$this->dbTables[$i]."@".session_id()."`", $ex[2]);
                 }
-                $_SESSION[$sessionSource] .= $query.$querySeparator;
+                $query = implode(" ", $ex);
             }
         }
 
-        echo mysqli_rollback($this->realConnection);
-        return new o_mysqli_result($realResult);
+        $mysqliResult = null;
+        try {
+            $realResult = mysqli_query($this->realConnection, $query);
+            $mysqliResult = $realResult;
+            $this->setAffectedRows(mysqli_affected_rows($this->realConnection));
+            if($realResult) { // save query
+                if(($this->isDMLQuery($query) && $this->affected_rows > 0) || $this->isDDLQuery($query)) {
+                    if(!isset($_SESSION[$sessionSource])) {
+                        $_SESSION[$sessionSource] = "";
+                    }
+                    $_SESSION[$sessionSource] .= $query.$querySeparator;
+                }
+            }
+        } catch(mysqli_sql_exception $e) {
+            echo "<b>Nie wykonano zapytania:</b> ".$query."<br><b>Błąd:</b> ".$e;
+        }
+
+        mysqli_rollback($this->realConnection);
+
+        // drop tables
+
+        for($i = 0; $i < count($this->dbTables); $i++) {
+            mysqli_query($this->realConnection, "DROP TABLE `".$this->dbTables[$i]."@".session_id()."`");
+        }
+
+        //
+
+        return new o_mysqli_result($mysqliResult);
     }
 
     private function isProhibitedQuery($query) {
-        $prohibitedCommands = ["DROP", "CREATE DATABASE"];
-
-        $upperQuery = strtoupper($query);
-
-        for($i = 0; $i < count($prohibitedCommands); $i++) {
-            if(str_starts_with($upperQuery, $prohibitedCommands[$i])) {
-                return true;
-            }
-        }
-        return false;
+        return $this->isCommand($query, ["CREATE TABLE", "CREATE DATABASE"]);
     }
 
-    private function isSaveQuery($query) {
-        $saveCommands = ["INSERT", "UPDATE", "DELETE", "TRUNCATE"];
+    private function isDDLQuery($query) {
+        return $this->isCommand($query, ["DROP", "CREATE", "ALTER"]);
+    }
 
+    private function isDMLQuery($query) {
+        return $this->isCommand($query, ["INSERT", "UPDATE", "DELETE", "TRUNCATE"]);
+    }
+
+    private function isCommand($query, $commands) {
         $upperQuery = strtoupper($query);
 
-        for($i = 0; $i < count($saveCommands); $i++) {
-            if(str_starts_with($upperQuery, $saveCommands[$i])) {
+        for($i = 0; $i < count($commands); $i++) {
+            if(str_starts_with($upperQuery, $commands[$i])) {
                 return true;
             }
         }
