@@ -182,7 +182,7 @@ class o_mysqli {
 
         //
 
-        return new o_mysqli_result($mysqliResult);
+        return $mysqliResult;
     }
 
     private function isProhibitedQuery($query) {
@@ -237,7 +237,7 @@ function o_mysqli_close($mysql) {
 }
 
 function o_mysqli_query($mysql, $query) {
-    $mysql->query($query);
+    return $mysql->query($query);
 }
 
 function o_mysqli_select_db($mysql, $db) {

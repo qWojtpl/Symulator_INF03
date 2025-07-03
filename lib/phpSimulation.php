@@ -5,6 +5,7 @@ if(!isset($_POST["vm-sandbox-code"]) || !isset($_POST["vm-sandbox-exam"])) {
     return;
 }
 
+set_time_limit(5);
 define("EXAM_NAME", $_POST["vm-sandbox-exam"]);
 
 require_once("./config.php");
@@ -13,7 +14,8 @@ require_once("./overrides.php");
 
 function getSandbox($getVariables, $postVariables) {
     $sandbox = new PHPSandbox\PHPSandbox;
-    $sandbox->whitelistFunc("date", "function", "var_dump", "define");
+    $sandbox->whitelistFunc("date", "function", "var_dump", "define", "mysqli_fetch_assoc", "mysqli_fetch_array");
+    $sandbox->whitelistClass("mysqli_result");
     $sandbox->setOption("allow_functions", "true");
     callOverrides($sandbox);
     $sandbox->defineSuperGlobal("_POST", $postVariables);
